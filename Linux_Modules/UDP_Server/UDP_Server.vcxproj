@@ -61,14 +61,14 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-    <LibraryPath>
-    </LibraryPath>
-    <IncludePath>D:\cygwin64\lib\;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\cygwin64\lib\</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <SourcePath>D:\cygwin64\lib\;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <LibraryPath>
-    </LibraryPath>
-    <IncludePath>D:\cygwin64\lib\;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\cygwin64\lib\</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <SourcePath>D:\cygwin64\lib\;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
