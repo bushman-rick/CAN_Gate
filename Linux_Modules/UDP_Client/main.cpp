@@ -97,7 +97,7 @@ void transmit()
 	//fgets(buffer, 256, stdin);
 	sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)&serv, m);
 	//recvfrom(sockfd, buffer, 256, 0, (struct sockaddr *)&client, &l);
-
+	//
 }
 
 int main()
