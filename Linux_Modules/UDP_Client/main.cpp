@@ -56,8 +56,12 @@ void transmit()
 	*/
 
 	serv.sin_family = AF_INET;
-	serv.sin_port = htons(53000);
-	serv.sin_addr.s_addr = inet_addr("192.168.0.19");
+	serv.sin_port = htons(6666);
+	/*
+	cout << "Enter IP/n";
+	Some code to get an IP
+	*/
+	serv.sin_addr.s_addr = inet_addr("127.0.0.1");
 	/*
 	Base CAN frame format
 	Start-of-frame								1		Denotes the start of frame transmission
@@ -109,8 +113,10 @@ int main()
 
 	for (int x = 0; x < y; x++)
 	{
-		transmit();
+		printf("%i", x + 1);
+		//cout << x + 1;
+		//transmit();
 		sleep(1); //compiles with g++. installed header but no joy.
 	}
-	cout << "Done.\n";
+	cout << "\nDone.\n";
 }
