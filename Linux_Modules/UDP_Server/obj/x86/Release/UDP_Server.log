@@ -3,7 +3,7 @@
   Copying sources remotely
   Starting remote build
   Compiling sources:
-  main.cpp
-C:\Users\Cam.LAPTOP-174GHD89\Source\Repos\SIT302-CAN_Gate\Linux_Modules\UDP_Server\main.cpp(13,6): warning : unused variable ‘s’ [-Wunused-variable]
+  server.cpp
+D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Server\server.cpp(45,2): warning : "/*" within comment [-Wcomment]
   Linking objects
-  UDP_Server.vcxproj -> C:\Users\Cam.LAPTOP-174GHD89\Source\Repos\SIT302-CAN_Gate\Linux_Modules\UDP_Server\bin\x86\Release\UDP_Server.out
+  UDP_Server.vcxproj -> D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Server\bin\x86\Release\UDP_Server.out

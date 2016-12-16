@@ -1,0 +1,8 @@
+﻿  Validating architecture
+  Validating sources
+  Copying sources remotely to 'cangate.ddns.net'
+  Starting remote build
+  Compiling sources:
+  client.cpp
+  Linking objects
+  UDP_Client.vcxproj -> D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Client\bin\x86\Release\UDP_Client.out
