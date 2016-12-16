@@ -3,8 +3,6 @@
   Copying sources remotely to 'cangate.ddns.net'
   Starting remote build
   Compiling sources:
-  main.cpp
-D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Client\main.cpp(95,11): warning : comparison between signed and unsigned integer expressions [-Wsign-compare]
-D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Client\main.cpp(90,14): warning : unused variable ‘l’ [-Wunused-variable]
+  client.cpp
   Linking objects
   UDP_Client.vcxproj -> D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Client\bin\x86\Release\UDP_Client.out

@@ -71,7 +71,7 @@
     <IncludePath>D:\cygwin64\lib\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="server.cpp" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
