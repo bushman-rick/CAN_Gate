@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     // made public so it can be read from the payload class
     public String usrIP = "";
     public int usrPort = 0;
+    private UDP_Server myUDP_Server = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +38,16 @@ public class MainActivity extends AppCompatActivity {
         mEditIP = (EditText)findViewById(R.id.ipAddr);
         mEditPort = (EditText)findViewById(R.id.port);
 
+    }
+
+    protected void onResume() {
+        myUDP_Server = new UDP_Server();
+        myUDP_Server.start();
+        super.onResume();
+    }
+
+    protected void onPause() {
+        myUDP_Server.kill();
     }
 
     // SendUDP will identify the send button and convert user input into the required type
@@ -83,10 +94,10 @@ public class MainActivity extends AppCompatActivity {
             }
             return null;
         }
-
-
-        }
     }
+}
+
+
 
     /* This was code used before I found out I needed to run networking stuff on a separate thread.
 
