@@ -17,7 +17,7 @@ using namespace std;
 #define DST_PRT 4283
 #define SRC_PRT 8353
 
-#define IP_ADR "192.168.0.19"
+#define IP_ADR "192.168.0.20"
 /*
 Got htons definitions from https://linux.die.net/man/3/htons
 
@@ -100,13 +100,13 @@ void transmit()
 		buffer[a] = datapack[a];
 	}
 
-	bind(sockfd, (struct sockaddr *) &server, sizeof(server));
-	//__socklen_t m = sizeof(client);
-	
-	//sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)&client, m);
+	socklen_t s_size = sizeof(server);
+	socklen_t c_size = sizeof(client);
 
-	sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *) &client, sizeof(client));
-	//recvfrom(sockfd, buffer, 256, 0, (struct sockaddr *)&client, &l);
+	bind(sockfd, (struct sockaddr *) &server, s_size);
+
+	sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *) &client, c_size);
+
 	close(sockfd);
 }
 

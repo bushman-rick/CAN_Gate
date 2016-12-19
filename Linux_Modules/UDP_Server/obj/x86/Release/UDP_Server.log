@@ -4,6 +4,7 @@
   Starting remote build
   Compiling sources:
   server.cpp
-D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Server\server.cpp(45,2): warning : "/*" within comment [-Wcomment]
+D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Server\server.cpp(43,12): warning : unused variable ‘s_size’ [-Wunused-variable]
+D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Server\server.cpp(72,7): warning : unused variable ‘g’ [-Wunused-variable]
   Linking objects
   UDP_Server.vcxproj -> D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Server\bin\x86\Release\UDP_Server.out
