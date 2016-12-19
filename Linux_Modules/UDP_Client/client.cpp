@@ -39,7 +39,7 @@ void error(char *msg)
 }
 
 
-void transmit()
+void transmit(int x)
 {	
 	/*
 	struct in_addr {
@@ -53,6 +53,7 @@ void transmit()
 	char             sin_zero[8];  // zero this if you want to
 	}client, client;
 	*/
+	int _x = x;
 	int sockfd;
 	//sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 	struct sockaddr_in client, server;
@@ -91,10 +92,10 @@ void transmit()
 	End-of-frame (EOF)							7		Must be recessive (1)
 	Total (min/max)								44/108 bytes (6/14)
 	*/
-	string datapack = "CANpacket\0";
-	char buffer[10];
-
+	string datapack = "CANpacket";
+	char buffer[16];
 	int temp = datapack.size();
+
 	for (int a = 0; a <= temp; a++)
 	{
 		buffer[a] = datapack[a];
@@ -122,7 +123,7 @@ int main()
 		do 
 		{ 
 			cout << "Packet " << x + 1 << " sent..." << endl;
-			transmit();
+			transmit(x);
 			x++;
 			sleep(1); //compiles with g++. installed header but no joy.
 		} while (y == 7);
@@ -132,7 +133,7 @@ int main()
 		cout << "Sending " << y << " packets.\n";
 		for (x = 0; x < y; x++)
 		{
-			transmit();
+			transmit(x);
 			cout << "Packet " << x + 1 << " sent..." << endl;
 			sleep(1); //compiles with g++. installed header but no joy.
 		}

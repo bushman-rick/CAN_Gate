@@ -45,7 +45,7 @@ void receive(char resp)
 
 	int pack_count = 0;
 
-	cout << "\ngoing to recv\n";
+	cout << "\nReceiving from " << " IP: " << IP_ADR << " Port: " << SRC_PRT << endl;
 
 	while (_resp == 'y')
 	{
@@ -55,13 +55,13 @@ void receive(char resp)
 		{
 			cout << "ERROR READING FROM SOCKET";
 		}
-		cout << "\n Packet # "<< pack_count <<  "\nData: " << buffer << endl;
+		cout << "Packet # "<< pack_count <<  " Data: " << buffer << endl;
 		//output to file???
 		//cin >> _resp;
-		if (_resp == 'n')
-		{
-			break;
-		}
+		//if (_resp == 'n')
+		//{
+		//	break;
+		//}
 	}
 
 	close(sockfd);
