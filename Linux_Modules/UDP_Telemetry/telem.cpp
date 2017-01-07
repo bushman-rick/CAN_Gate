@@ -1,6 +1,20 @@
 // reference http://www.cplusplus.com/forum/unices/76180/
 // reference http://stackoverflow.com/questions/9873061/how-to-set-the-source-port-in-the-udp-socket-in-c
 
+/*
+Function:
+Recieve parsed CAN packet from CAN_UDP_Server vis FIFO
+Process packet
+Transmit to Android Tablet (192.168.0.18:8353)
+*/
+
+
+
+
+
+
+
+
 #include<iostream>
 #include<arpa/inet.h> //source: http://unix.superglobalmegacorp.com/xnu/newsrc/bsd/include/arpa/inet.h.html
 #include<unistd.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/unistd.h.html
@@ -11,33 +25,49 @@
 #include<stdlib.h>
 #include<netinet/in.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/netinet/in.h.html
 #include<sys/time.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/time.h.html
-
+#include<fstream>
 
 using namespace std;
-#define DST_PRT 4283
-#define SRC_PRT 8353
 
-#define IP_ADR "192.168.0.20"
-/*
-Got htons definitions from https://linux.die.net/man/3/htons
+int SERVER_PRT; //8353
+int CLIENT_PRT; //4283
+const char* IP_ADR = "192.168.0.18";
 
-#include <netinet/in.h>
-
-uint32_t htonl(uint32_t hostlong);
-uint16_t htons(uint16_t hostshort);
-uint32_t ntohl(uint32_t netlong);
-uint16_t ntohs(uint16_t netshort);
-
-copied into netinet/in.h
-*/
-
-
-void error(char *msg)
+void read_config()
 {
-	perror(msg);
-	exit(EXIT_FAILURE);
+	string line;
+	ifstream conf("config"); //~/projects/UDP_Telemetry/config
+	if (conf.is_open())
+	{
+		while (getline(conf, line))
+		{
+			if (line == "SERVER_PRT")
+			{
+				getline(conf, line);
+				SERVER_PRT = atoi(line.c_str()); //convert string to int
+			}
+			else if (line == "CLIENT_PRT")
+			{
+				getline(conf, line);
+				CLIENT_PRT = atoi(line.c_str()); //convert string to int
+			}
+			else if (line == "IP_ADR")
+			{
+				getline(conf, line);
+				//IP_ADR = line.c_str(); //convert string to const char* //// I couldnt get this to work ie read the ip from the file 
+			}
+		}
+		cout << "config read:" << endl;
+		cout << "Destination port: " << SERVER_PRT << endl;
+		cout << "Source port: " << CLIENT_PRT << endl;
+		cout << "IP: " << IP_ADR << endl;
+		conf.close();
+	}
+	else cout << "Unable to open file";
+	// write to syslog()
+	// kill server
+	return;
 }
-
 
 void transmit(int x)
 {
@@ -70,28 +100,13 @@ void transmit(int x)
 	memset(&client, 0, sizeof(client));
 	client.sin_family = AF_INET;
 	client.sin_addr.s_addr = inet_addr(IP_ADR);
-	client.sin_port = htons(DST_PRT);
+	client.sin_port = htons(SERVER_PRT);
 
 	memset(&server, 0, sizeof(server));
 	server.sin_family = AF_INET;
 	server.sin_addr.s_addr = htonl(INADDR_ANY);
-	server.sin_port = htons(SRC_PRT);
-	/*
-	Base CAN frame format
-	Start-of-frame								1		Denotes the start of frame transmission
-	Identifier (green)							11		A (unique) identifier which also represents the message priority
-	Remote transmission request (RTR) (blue)	1		Must be dominant (0) for data frames and recessive (1) for remote request frames (see Remote Frame, below)
-	Identifier extension bit (IDE)				1		Must be dominant (0) for base frame format with 11-bit identifiers
-	Reserved bit (r0)							1		Reserved bit. Must be dominant (0), but accepted as either dominant or recessive.
-	Data length code (DLC) (yellow)				4		Number of bytes of data (0–8 bytes)[a]
-	Data field (red)							0–64	(0-8 bytes)	Data to be transmitted (length in bytes dictated by DLC field)
-	CRC											15		Cyclic redundancy check
-	CRC delimiter								1		Must be recessive (1)
-	ACK slot									1		Transmitter sends recessive (1) and any receiver can assert a dominant (0)
-	ACK delimiter								1		Must be recessive (1)
-	End-of-frame (EOF)							7		Must be recessive (1)
-	Total (min/max)								44/108 bytes (6/14)
-	*/
+	server.sin_port = htons(CLIENT_PRT);
+
 	string datapack = "CANpacket";
 	char buffer[16];
 	int temp = datapack.size();
@@ -104,7 +119,15 @@ void transmit(int x)
 	socklen_t s_size = sizeof(server);
 	socklen_t c_size = sizeof(client);
 
-	bind(sockfd, (struct sockaddr *) &server, s_size);
+	///////////////////////////// v bind socket v
+	if (bind(sockfd, (struct sockaddr *) &client, c_size) < 0)
+	{
+		cout << "bind fail" << endl;
+		// write to syslog()
+		// kill telem
+		return;
+	}
+	///////////////////////////// ^ bind socket ^
 
 	sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *) &client, c_size);
 
@@ -113,6 +136,12 @@ void transmit(int x)
 
 int main()
 {
+	///////////////////////////// v reads config file v
+	// reference: http://www.cplusplus.com/doc/tutorial/files/
+	read_config();
+
+	///////////////////////////// ^ reads config file ^
+
 	int y;
 	int x = 0;
 	cout << "Enter number of packets to send (7 = continuous): ";
@@ -125,7 +154,7 @@ int main()
 			cout << "Packet " << x + 1 << " sent..." << endl;
 			transmit(x);
 			x++;
-			sleep(1); //compiles with g++. installed header but no joy.
+			//sleep(1); //compiles with g++. installed header but no joy.
 		} while (y == 7);
 	}
 	else
@@ -135,7 +164,7 @@ int main()
 		{
 			transmit(x);
 			cout << "Packet " << x + 1 << " sent..." << endl;
-			sleep(1); //compiles with g++. installed header but no joy.
+			//sleep(1); //compiles with g++. installed header but no joy.
 		}
 	}
 	cout << "Done.\n";

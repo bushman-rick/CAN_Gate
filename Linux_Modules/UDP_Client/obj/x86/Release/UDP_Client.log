@@ -1,10 +1,10 @@
-﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Client\obj\x86\Release\) contains files shared from another project (UDP_Client.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Client\obj\x86\Release\) contains files shared from another project (UDP_Client.vcxproj, UDP_test.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   Validating architecture
   Validating sources
   Copying sources remotely to 'cangate.ddns.net'
   Starting remote build
   Compiling sources:
-  test.cpp
-D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Client\test.cpp(56,6): warning : unused variable ‘_x’ [-Wunused-variable]
+  test_c.cpp
+D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Client\test_c.cpp(39,6): warning : unused variable ‘_x’ [-Wunused-variable]
   Linking objects
-  UDP_Client.vcxproj -> D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Client\bin\x86\Release\UDP_test.out
+  UDP_Client.vcxproj -> D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Client\bin\x86\Release\test_client.out

@@ -1,3 +1,20 @@
+
+
+
+/*
+Function:
+Receive parsed CAN packet from CAN to Ethernet Gateway from 192.168.0.10:4284
+Parse CAN packet
+Check is UDP_Telemetry is started, if not, start it
+Write to FIFO
+*/
+
+
+
+
+
+
+
 #include<iostream>
 #include<arpa/inet.h> //source: http://unix.superglobalmegacorp.com/xnu/newsrc/bsd/include/arpa/inet.h.html
 #include<unistd.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/unistd.h.html
@@ -8,18 +25,49 @@
 #include<stdlib.h>
 #include<netinet/in.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/netinet/in.h.html
 #include<sys/time.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/time.h.html
-
+#include<fstream>
 
 using namespace std;
-#define DST_PRT 8353
-#define SRC_PRT 4283
 
-#define IP_ADR "192.168.0.20"
+int SERVER_PRT; //4284
+int CLIENT_PRT; //8352
+const char* IP_ADR = "192.168.0.10"; 
 
-void error(char *msg)
+
+void read_config() 
 {
-	perror(msg);
-	exit(EXIT_FAILURE);
+	string line;
+	ifstream conf("config"); //~/projects/CAN_UDP_Server/config
+	if (conf.is_open())
+	{
+		while (getline(conf, line))
+		{
+			if (line == "SERVER_PRT")
+			{
+				getline(conf, line);
+				SERVER_PRT = atoi(line.c_str()); //convert string to int
+			}
+			else if (line == "CLIENT_PRT")
+			{
+				getline(conf, line);
+				CLIENT_PRT = atoi(line.c_str()); //convert string to int
+			}
+			else if (line == "IP_ADR")
+			{
+				getline(conf, line);
+				//IP_ADR = line.c_str(); //convert string to const char* //// I couldnt get this to work ie read the ip from the file 
+			}
+		}
+		cout << "config read:" << endl;
+		//cout << "Destination port: " << SERVER_PRT << endl;
+		cout << "Source port: " << CLIENT_PRT << endl;
+		cout << "IP: " << IP_ADR << endl;
+		conf.close();
+	}
+	else cout << "Unable to open file";
+	// write to syslog()
+	// kill server
+	return;
 }
 
 void receive(char resp)
@@ -27,53 +75,124 @@ void receive(char resp)
 	char _resp = resp;
 	int sockfd;
 	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-	struct sockaddr_in server, client;
+	struct sockaddr_in server , client;
 
+	memset(&server, 0, sizeof(server));
 	server.sin_family = AF_INET;
 	server.sin_addr.s_addr = inet_addr(IP_ADR);
-	server.sin_port = htons(DST_PRT);
+	server.sin_port = htons(SERVER_PRT);
 
+	memset(&client, 0, sizeof(client));
 	client.sin_family = AF_INET;
 	client.sin_addr.s_addr = inet_addr(IP_ADR);
-	client.sin_port = htons(SRC_PRT);
+	client.sin_port = htons(CLIENT_PRT);
 
 
 	char buffer[256];
 	socklen_t c_size = sizeof(client);
 	socklen_t s_size = sizeof(server);
-	bind(sockfd, (struct sockaddr *) &client, c_size);
 
-	int pack_count = 0;
+	///////////////////////////// v bind socket v
+	if (bind(sockfd, (struct sockaddr *) &client, c_size) < 0)
+	{
+		cout << "bind fail" << endl;
 
-	cout << "\nReceiving from " << " IP: " << IP_ADR << " Port: " << SRC_PRT << endl;
+		// write to syslog()
+		// kill server
+		return;
+	}
+	///////////////////////////// ^ bind socket ^
+
+	///////////////////////////// v Listen v
+
+	int LISTEN_BACKLOG = 100;
+	if (listen(sockfd, LISTEN_BACKLOG) < 0)
+	{
+		cout << "listen failed" << endl;
+		// write to syslog()
+		// kill server
+		return;
+	}
+
+	///////////////////////////// ^ Listen ^
+
+	///////////////////////////// v Accept() v
+
+	if (accept(sockfd, (struct sockaddr *)&client, &c_size) < 0)
+	{
+		cout << "accept failed" << endl;
+		// write to syslog()
+		// kill server
+		return;
+	}
+
+	///////////////////////////// ^ Accept() ^
+
+	int count = 0;
+	cout << "\nReceiving from IP: " << IP_ADR << " Port: " << CLIENT_PRT << endl;
 
 	while (_resp == 'y')
 	{
-		pack_count++;
-		int rc = recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)&client, &c_size);
-		if (rc < 0)
+		count++;
+	
+		///////////////////////////// v receive v
+
+		if (recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)&client, &c_size) < 0)
 		{
 			cout << "ERROR READING FROM SOCKET";
+			// write to syslog()
+			// kill server
+			return;
 		}
-		cout << "Packet # "<< pack_count <<  " Data: " << buffer << endl;
+		cout << "Packet #" << count << "; Data: " << buffer << endl;
+
+		///////////////////////////// ^ receive ^
+
+		///////////////////////////// v Parse CAN packet v
+
 		//output to file???
 		//cin >> _resp;
 		//if (_resp == 'n')
 		//{
 		//	break;
 		//}
+
+		///////////////////////////// ^ Parse CAN packet ^
+
+		///////////////////////////// v UDP_Telemetry check v
+
+		///////////////////////////// ^ UDP_Telemetry check ^
+
+		///////////////////////////// v Write to FIFO v
+
+		///////////////////////////// ^ Write to FIFO ^
+
 	}
+	
 
 	close(sockfd);
 }
 int main()
 {
+	///////////////////////////// v reads config file v
+	// reference: http://www.cplusplus.com/doc/tutorial/files/
+	read_config();
+
+	///////////////////////////// ^ reads config file ^
+
 	char resp;
 	bool g = true;
 
 	cout << "Receive? (y/n): " << endl;
 	cin >> resp;
+	if (tolower(resp) == 'n')
+	{
+		cout << "Exiting..." << endl;
+		return 0;
+	}
 	receive(resp);
+	
+	
 	//while (resp == 'y');
 	//cout << pack_count;
 	//while (g == true);
