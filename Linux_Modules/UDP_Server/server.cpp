@@ -225,8 +225,9 @@ void receive(char resp)
 		{
 			error("Could not open UDP_Telemetry. Exiting.\n");
 		}
-		*/
 		cout << telemCheckCount << endl;
+		*/
+
 		///////////////////////////// ^ UDP_Telemetry check ^
 
 
