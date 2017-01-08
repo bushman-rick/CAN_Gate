@@ -33,6 +33,11 @@ int SERVER_PRT; //4284
 int CLIENT_PRT; //8352
 const char* IP_ADR = "192.168.0.10"; 
 
+void error(const char *msg)
+{
+	perror(msg);
+	exit(1);
+}
 
 void read_config() 
 {
@@ -75,6 +80,15 @@ void receive(char resp)
 	char _resp = resp;
 	int sockfd;
 	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+	if (sockfd < 0)
+	{
+		cout << "error opening socket" << endl;
+	}
+
+	int enable = 1;
+	if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
+		error("setsockopt(SO_REUSEADDR) failed");
+
 	struct sockaddr_in server , client;
 
 	memset(&server, 0, sizeof(server));
@@ -82,54 +96,56 @@ void receive(char resp)
 	server.sin_addr.s_addr = inet_addr(IP_ADR);
 	server.sin_port = htons(SERVER_PRT);
 
-	memset(&client, 0, sizeof(client));
-	client.sin_family = AF_INET;
-	client.sin_addr.s_addr = inet_addr(IP_ADR);
-	client.sin_port = htons(CLIENT_PRT);
+	//memset(&client, 0, sizeof(client));
+	//client.sin_family = AF_INET;
+	//client.sin_addr.s_addr = inet_addr(IP_ADR);
+	//client.sin_port = htons(CLIENT_PRT);
 
 
 	char buffer[256];
-	socklen_t c_size = sizeof(client);
+	//socklen_t c_size = sizeof(client);
 	socklen_t s_size = sizeof(server);
 
-	///////////////////////////// v bind socket v
-	if (bind(sockfd, (struct sockaddr *) &client, c_size) < 0)
-	{
-		cout << "bind fail" << endl;
 
+	///////////////////////////// v bind socket v
+	if (bind(sockfd, (struct sockaddr*) &server, s_size) < 0)
+	{
+		error("bind error");
 		// write to syslog()
 		// kill server
-		return;
+		//return;
 	}
 	///////////////////////////// ^ bind socket ^
 
+	/*
 	///////////////////////////// v Listen v
 
 	int LISTEN_BACKLOG = 100;
 	if (listen(sockfd, LISTEN_BACKLOG) < 0)
 	{
-		cout << "listen failed" << endl;
+		error("listen failed");
 		// write to syslog()
 		// kill server
-		return;
+		//return;
 	}
 
 	///////////////////////////// ^ Listen ^
 
 	///////////////////////////// v Accept() v
 
-	if (accept(sockfd, (struct sockaddr *)&client, &c_size) < 0)
+	if (accept(sockfd, (struct sockaddr *)&server, &s_size) < 0)
 	{
-		cout << "accept failed" << endl;
+		error("accept failed");
 		// write to syslog()
 		// kill server
-		return;
+		//return;
 	}
 
 	///////////////////////////// ^ Accept() ^
+	*/
 
 	int count = 0;
-	cout << "\nReceiving from IP: " << IP_ADR << " Port: " << CLIENT_PRT << endl;
+	cout << "\nReceiving from IP: " << IP_ADR << " Port: " << SERVER_PRT << endl;
 
 	while (_resp == 'y')
 	{
@@ -137,26 +153,20 @@ void receive(char resp)
 	
 		///////////////////////////// v receive v
 
-		if (recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)&client, &c_size) < 0)
+		if (recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)&server, &s_size) < 0)
 		{
 			cout << "ERROR READING FROM SOCKET";
 			// write to syslog()
 			// kill server
 			return;
 		}
-		cout << "Packet #" << count << "; Data: " << buffer << endl;
 
 		///////////////////////////// ^ receive ^
 
 		///////////////////////////// v Parse CAN packet v
 
-		//output to file???
-		//cin >> _resp;
-		//if (_resp == 'n')
-		//{
-		//	break;
-		//}
-
+		cout << "Packet #" << count << "; Data: " << buffer << endl;
+		
 		///////////////////////////// ^ Parse CAN packet ^
 
 		///////////////////////////// v UDP_Telemetry check v

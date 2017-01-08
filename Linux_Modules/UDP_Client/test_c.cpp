@@ -32,7 +32,7 @@ using namespace std;
 
 int SERVER_PRT = 4284;
 int CLIENT_PRT = 4283;
-const char* IP_ADR = "192.168.0.10";
+const char* IP_ADR = "192.168.0.10"; //192.168.0.74 is the actual CAN<>Eth gateway IP
 
 void transmit(int x)
 {

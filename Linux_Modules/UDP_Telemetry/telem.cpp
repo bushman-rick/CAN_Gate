@@ -31,7 +31,7 @@ using namespace std;
 
 int SERVER_PRT; //8353
 int CLIENT_PRT; //4283
-const char* IP_ADR = "192.168.0.18";
+const char* IP_ADR = "192.168.0.10"; //192.168.0.18 is the actual destination ip
 
 void read_config()
 {

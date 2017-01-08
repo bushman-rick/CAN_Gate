@@ -34,7 +34,7 @@ const int LISTEN_BACKLOG = 100;
 
 int SERVER_PRT = 1234;
 int CLIENT_PRT = 8353;
-const char* IP_ADR = "192.168.0.18";
+const char* IP_ADR = "192.168.0.10"; //192.168.0.18 is the actual Android tablet IP
 
 void receive(char resp)
 {
