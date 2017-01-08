@@ -31,10 +31,15 @@ Transmit CAN packet to CAN_UDP_Server (192.168.0.10:4284)
 
 using namespace std;
 
-int SERVER_PRT = 4284;
-int CLIENT_PRT = 4283;
-const char* IP_ADR = "192.168.0.19"; //192.168.0.74 is the actual CAN<>Eth gateway IP
+int SERVER_PRT = 4283;
+int CLIENT_PRT = 4284;
+const char* IP_ADR = "192.168.0.10"; //192.168.0.74 is the actual CAN<>Eth gateway IP
 
+void error(const char *msg)
+{
+	perror(msg);
+	exit(1);
+}
 
 void transmit()
 {
@@ -78,11 +83,12 @@ void transmit()
 	stringstream ss_dp;
 	ss_dp << ts_hi << ts_lo << ide << type << data[0] << data[1] << data[2] << data[3] << data[4] << data[5];
 	datapack = ss_dp.str();
-	char buffer[datapack.size() + 1];
+	int temp = datapack.size();
+	char buffer[temp + 1];
 
 	//cout << datapack << endl;
 
-	int temp = datapack.size();
+
 
 	for (int a = 0; a <= temp; a++)
 	{
@@ -95,16 +101,19 @@ void transmit()
 	socklen_t c_size = sizeof(client);
 
 	///////////////////////////// v bind socket v
-	if (bind(sockfd, (struct sockaddr *) &server, s_size) < 0)
+	if (bind(sockfd, (struct sockaddr *) &client, c_size) < 0)
 	{
-		cout << "bind fail" << endl;
+		error("bind fail");
 		// write to syslog()
 		// kill telem
 		return;
 	}
 	///////////////////////////// ^ bind socket ^
 
-	sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *) &client, c_size);
+	if (sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *) &server, s_size) < 0)
+	{
+		error("send fail");
+	}
 
 	close(sockfd);
 }
@@ -139,7 +148,7 @@ int main()
 	}
 	cout << "Done.\n";
 	*/
-	for (int i = 0; i <= 5; i++)
+	for (int i = 0; i <= 15; i++)
 	{
 		transmit();
 		sleep(1);

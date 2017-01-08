@@ -28,7 +28,7 @@ Write to FIFO
 #include<sys/time.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/time.h.html
 #include<fstream>
 #include<sys/stat.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/stat.h.html
-#include<sys/fcntl.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/fcntl.h.html
+#include<fcntl.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/fcntl.h.html
 
 using namespace std;
 
@@ -75,17 +75,29 @@ int telemCheck()
 
 int writeFifo(string packet)
 {
-	string _packet = packet;
-	if (true) //if write is successful...
+	int temp = packet.size();
+	char tBuff[temp + 1];
+
+	for (int a = 0; a <= temp; a++)
 	{
-		//Good
-		return 1;
+		tBuff[a] = packet[a];
 	}
-	else
-	{
-		//Bad
-		return -1; //return with fail
-	}
+
+	int fd;
+	const char *fifo = "/home/testo/projects/fifo";
+
+	/* create the FIFO (named pipe) */
+	mkfifo(fifo, 0666);
+
+	/* write "Hi" to the FIFO */
+	fd = open(fifo, O_WRONLY);
+	write(fd, tBuff, sizeof(packet));
+	close(fd);
+
+	/* remove the FIFO */
+	unlink(fifo);
+
+	return 0;
 }
 
 void read_config() 
@@ -113,8 +125,8 @@ void read_config()
 			}
 		}
 		cout << "config read:" << endl;
-		//cout << "Destination port: " << SERVER_PRT << endl;
-		cout << "Source port: " << CLIENT_PRT << endl;
+		//cout << "Destination port: " << CLIENT_PRT << endl;
+		cout << "Source port: " << SERVER_PRT << endl;
 		cout << "IP: " << IP_ADR << endl;
 		conf.close();
 	}
@@ -197,13 +209,14 @@ void receive(char resp)
 
 		///////////////////////////// v UDP_Telemetry check v
 		//check if UDP_Telemetery (telem.cpp) is running. If not, run it.
-
-		telemCheck();
 		/*
 		if telemCheck() is good, teleCheckCount is reset to 0.
 		If telemCheck is called more than 10 times, something is wrong and error() is called
 		Without this check, telemCheck will spawn as many UDP_Telemetry processess as it can
 		*/
+		
+		/*
+		telemCheck();
 		if (telemCheckCount < 10)
 		{
 			telemCheckCount++;
@@ -212,7 +225,7 @@ void receive(char resp)
 		{
 			error("Could not open UDP_Telemetry. Exiting.\n");
 		}
-
+		*/
 		cout << telemCheckCount << endl;
 		///////////////////////////// ^ UDP_Telemetry check ^
 

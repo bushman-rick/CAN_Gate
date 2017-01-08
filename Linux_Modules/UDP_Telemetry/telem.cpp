@@ -4,6 +4,7 @@
 /*
 Function:
 Recieve parsed CAN packet from CAN_UDP_Server vis FIFO
+	Only when there is something read from FIFO should transmit be executed
 Process packet
 Transmit to Android Tablet (192.168.0.18:8353)
 */
@@ -11,6 +12,7 @@ Transmit to Android Tablet (192.168.0.18:8353)
 //###########################################
 //compile: "g++ telem.cpp -o UDP_Telemetry"
 //###########################################
+
 
 
 
@@ -27,7 +29,7 @@ Transmit to Android Tablet (192.168.0.18:8353)
 #include<sys/time.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/time.h.html
 #include<fstream>
 #include<sys/stat.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/stat.h.html
-#include<sys/fcntl.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/fcntl.h.html
+#include<fcntl.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/fcntl.h.html
 
 using namespace std;
 
@@ -35,7 +37,7 @@ int SERVER_PRT; //8353
 int CLIENT_PRT; //4283
 const char* IP_ADR = "192.168.0.10"; //192.168.0.18 is the actual destination ip
 
-
+const int FIFO_BUFF = 1024;
 
 void error(const char *msg)
 {
@@ -45,15 +47,17 @@ void error(const char *msg)
 
 string readFifo()
 {
-	string _fifoBuff = "0123456789";
-	if (true) //ie read the fifo pipe, if good then...
-	{
-		return _fifoBuff;
-	}
-	else //else...
-	{
-		return "-1";
-	}
+	int fd;
+	const char *fifo = "/home/testo/projects/fifo";
+	char buff[FIFO_BUFF];
+
+	/* open, read, and display the message from the FIFO */
+	fd = open(fifo, O_RDONLY);
+	read(fd, buff, FIFO_BUFF);
+	cout << "Read from FIFO: " << buff << endl;
+	close(fd);
+
+	return "0";
 }
 
 
@@ -202,7 +206,7 @@ int main()
 	
 	*/
 	
-	for (int i = 0; i <= 5; i++)
+	for (int i = 0; i <= 15; i++)
 	{
 		transmit();
 		sleep(1);
