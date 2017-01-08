@@ -5,6 +5,5 @@
   Starting remote build
   Compiling sources:
   test_c.cpp
-D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Client\test_c.cpp(39,6): warning : unused variable ‘_x’ [-Wunused-variable]
   Linking objects
   UDP_Client.vcxproj -> D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Client\bin\x86\Release\test_client.out

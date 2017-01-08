@@ -8,9 +8,9 @@ Process packet
 Transmit to Android Tablet (192.168.0.18:8353)
 */
 
-
-
-
+//###########################################
+//compile: "g++ telem.cpp -o UDP_Telemetry"
+//###########################################
 
 
 
@@ -26,6 +26,8 @@ Transmit to Android Tablet (192.168.0.18:8353)
 #include<netinet/in.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/netinet/in.h.html
 #include<sys/time.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/time.h.html
 #include<fstream>
+#include<sys/stat.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/stat.h.html
+#include<sys/fcntl.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/fcntl.h.html
 
 using namespace std;
 
@@ -33,10 +35,34 @@ int SERVER_PRT; //8353
 int CLIENT_PRT; //4283
 const char* IP_ADR = "192.168.0.10"; //192.168.0.18 is the actual destination ip
 
+
+
+void error(const char *msg)
+{
+	perror(msg);
+	exit(1);
+}
+
+string readFifo()
+{
+	string _fifoBuff = "0123456789";
+	if (true) //ie read the fifo pipe, if good then...
+	{
+		return _fifoBuff;
+	}
+	else //else...
+	{
+		return "-1";
+	}
+}
+
+
+
 void read_config()
 {
 	string line;
-	ifstream conf("config"); //~/projects/UDP_Telemetry/config
+	const char *path = "/home/testo/projects/UDP_Telemetry/config";
+	ifstream conf(path);
 	if (conf.is_open())
 	{
 		while (getline(conf, line))
@@ -57,81 +83,85 @@ void read_config()
 				//IP_ADR = line.c_str(); //convert string to const char* //// I couldnt get this to work ie read the ip from the file 
 			}
 		}
-		cout << "config read:" << endl;
-		cout << "Destination port: " << SERVER_PRT << endl;
-		cout << "Source port: " << CLIENT_PRT << endl;
-		cout << "IP: " << IP_ADR << endl;
+		//cout << "config read:" << endl;
+		//cout << "Destination port: " << SERVER_PRT << endl;
+		//cout << "Source port: " << CLIENT_PRT << endl;
+		//cout << "IP: " << IP_ADR << endl;
 		conf.close();
 	}
-	else cout << "Unable to open file";
-	// write to syslog()
-	// kill server
+	else
+	{
+		error("Unable to open file");
+		// write to syslog()
+		// kill server
+	}
 	return;
 }
 
-void transmit(int x)
+void transmit()
 {
-	/*
-	struct in_addr {
-	unsigned long s_addr;          // load with inet_pton()
-	};
+	///////////////////////////// v read FIFO v
+	string fifoBuff = readFifo();
+	if (fifoBuff == "-1")
+	{
+		error("FIFO pipe read fail");
+	}
 
-	struct sockaddr_in {
-	short            sin_family;   // e.g. AF_INET, AF_INET6
-	unsigned short   sin_port;     // e.g. htons(3490)
-	struct in_addr   sin_addr;     // see struct in_addr, below
-	char             sin_zero[8];  // zero this if you want to
-	}client, client;
-	*/
-	int _x = x;
-	int sockfd;
-	//sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-	struct sockaddr_in client, server;
+	///////////////////////////// ^ read FIFO ^
 
+	
 
-	//if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
-	//{
-	//cout << "socket fail" << endl;
-	//perror("socket fail");
-	//exit(1);
-	//}
-	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-
-	memset(&client, 0, sizeof(client));
-	client.sin_family = AF_INET;
-	client.sin_addr.s_addr = inet_addr(IP_ADR);
-	client.sin_port = htons(SERVER_PRT);
-
-	memset(&server, 0, sizeof(server));
-	server.sin_family = AF_INET;
-	server.sin_addr.s_addr = htonl(INADDR_ANY);
-	server.sin_port = htons(CLIENT_PRT);
-
-	string datapack = "CANpacket";
-	char buffer[16];
+	///////////////////////////// v process packet v
+	//needs work i think
+	string datapack = fifoBuff;
+	char buffer[128];
 	int temp = datapack.size();
 
 	for (int a = 0; a <= temp; a++)
 	{
 		buffer[a] = datapack[a];
 	}
+	
+	///////////////////////////// ^ process packet ^
 
-	socklen_t s_size = sizeof(server);
+
+	///////////////////////////// v transmit v
+
+	int sockfd;
+	//struct sockaddr_in server;
+	struct sockaddr_in client;
+
+
+	if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+	{
+		error("socket fail");
+	}
+
+	memset(&client, 0, sizeof(client));
+	client.sin_family = AF_INET;
+	client.sin_addr.s_addr = inet_addr(IP_ADR);
+	client.sin_port = htons(SERVER_PRT);
+
+	//memset(&server, 0, sizeof(server));
+	//server.sin_family = AF_INET;
+	//server.sin_addr.s_addr = htonl(INADDR_ANY);
+	//server.sin_port = htons(CLIENT_PRT);
+
+	//socklen_t s_size = sizeof(server);
 	socklen_t c_size = sizeof(client);
 
-	///////////////////////////// v bind socket v
+
 	if (bind(sockfd, (struct sockaddr *) &client, c_size) < 0)
 	{
-		cout << "bind fail" << endl;
-		// write to syslog()
-		// kill telem
-		return;
+		error("bind fail");
 	}
-	///////////////////////////// ^ bind socket ^
+	
 
 	sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *) &client, c_size);
-
 	close(sockfd);
+	
+	///////////////////////////// ^ transmit ^
+
 }
 
 int main()
@@ -142,6 +172,7 @@ int main()
 
 	///////////////////////////// ^ reads config file ^
 
+	/*
 	int y;
 	int x = 0;
 	cout << "Enter number of packets to send (7 = continuous): ";
@@ -152,7 +183,7 @@ int main()
 		do
 		{
 			cout << "Packet " << x + 1 << " sent..." << endl;
-			transmit(x);
+			transmit();
 			x++;
 			//sleep(1); //compiles with g++. installed header but no joy.
 		} while (y == 7);
@@ -162,10 +193,20 @@ int main()
 		cout << "Sending " << y << " packets.\n";
 		for (x = 0; x < y; x++)
 		{
-			transmit(x);
+			transmit();
 			cout << "Packet " << x + 1 << " sent..." << endl;
 			//sleep(1); //compiles with g++. installed header but no joy.
 		}
 	}
 	cout << "Done.\n";
+	
+	*/
+	
+	for (int i = 0; i <= 5; i++)
+	{
+		transmit();
+		sleep(1);
+	}
+
+	return 0;
 }

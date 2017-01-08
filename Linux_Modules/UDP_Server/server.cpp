@@ -9,8 +9,9 @@ Check is UDP_Telemetry is started, if not, start it
 Write to FIFO
 */
 
-
-
+//###########################################
+//compile: "g++ server.cpp -o CAN_UDP_Server"
+//###########################################
 
 
 
@@ -26,6 +27,8 @@ Write to FIFO
 #include<netinet/in.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/netinet/in.h.html
 #include<sys/time.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/time.h.html
 #include<fstream>
+#include<sys/stat.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/stat.h.html
+#include<sys/fcntl.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/fcntl.h.html
 
 using namespace std;
 
@@ -33,10 +36,56 @@ int SERVER_PRT; //4284
 int CLIENT_PRT; //8352
 const char* IP_ADR = "192.168.0.10"; 
 
+int telemCheckCount = 0;
+
 void error(const char *msg)
 {
 	perror(msg);
 	exit(1);
+}
+
+int telemCheck()
+{
+	int telemPID = 0;
+	string c = "pgrep UDP_Telemetry";
+	//string c = "pgrep t_client"; //for testing
+
+	system(c.c_str());
+
+	cout << "UDP_Telemetry PID: " << telemPID << endl;
+
+	if (telemPID > 0)
+	{
+		//OK, good to write to FIFO
+		cout << "UDP_Telemetry is running..." << endl;
+		telemCheckCount = 0;
+		return 1;
+	}
+	else
+	{
+		//Not OK, run UDP_Telemetry
+		cout << "Starting UDP_Telemetry" << endl;
+		//system("~/projects/UDP_Telemetry/UDP_Telemetry"); this doesnt work as desired
+		FILE *handle = popen("~/projects/UDP_Telemetry/UDP_Telemetry &","r");
+		//FILE *handle = popen("~/projects/test_client/a.out &", "r"); //for testing
+
+		return -1;
+	}
+}
+
+int writeFifo(string packet)
+{
+	string _packet = packet;
+	if (true) //if write is successful...
+	{
+		//Good
+		return 1;
+	}
+	else
+	{
+		//Bad
+		return -1; //return with fail
+	}
 }
 
 void read_config() 
@@ -78,6 +127,9 @@ void read_config()
 void receive(char resp)
 {
 	char _resp = resp;
+
+	///////////////////////////// v bind socket v
+
 	int sockfd;
 	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 	if (sockfd < 0)
@@ -106,46 +158,16 @@ void receive(char resp)
 	//socklen_t c_size = sizeof(client);
 	socklen_t s_size = sizeof(server);
 
-
-	///////////////////////////// v bind socket v
 	if (bind(sockfd, (struct sockaddr*) &server, s_size) < 0)
 	{
 		error("bind error");
 		// write to syslog()
 		// kill server
-		//return;
 	}
 	///////////////////////////// ^ bind socket ^
 
-	/*
-	///////////////////////////// v Listen v
-
-	int LISTEN_BACKLOG = 100;
-	if (listen(sockfd, LISTEN_BACKLOG) < 0)
-	{
-		error("listen failed");
-		// write to syslog()
-		// kill server
-		//return;
-	}
-
-	///////////////////////////// ^ Listen ^
-
-	///////////////////////////// v Accept() v
-
-	if (accept(sockfd, (struct sockaddr *)&server, &s_size) < 0)
-	{
-		error("accept failed");
-		// write to syslog()
-		// kill server
-		//return;
-	}
-
-	///////////////////////////// ^ Accept() ^
-	*/
-
 	int count = 0;
-	cout << "\nReceiving from IP: " << IP_ADR << " Port: " << SERVER_PRT << endl;
+	cout << "\nReceiving on: " << IP_ADR << " : " << SERVER_PRT << endl;
 
 	while (_resp == 'y')
 	{
@@ -163,18 +185,48 @@ void receive(char resp)
 
 		///////////////////////////// ^ receive ^
 
+
+
 		///////////////////////////// v Parse CAN packet v
 
 		cout << "Packet #" << count << "; Data: " << buffer << endl;
 		
 		///////////////////////////// ^ Parse CAN packet ^
 
-		///////////////////////////// v UDP_Telemetry check v
 
+
+		///////////////////////////// v UDP_Telemetry check v
+		//check if UDP_Telemetery (telem.cpp) is running. If not, run it.
+
+		telemCheck();
+		/*
+		if telemCheck() is good, teleCheckCount is reset to 0.
+		If telemCheck is called more than 10 times, something is wrong and error() is called
+		Without this check, telemCheck will spawn as many UDP_Telemetry processess as it can
+		*/
+		if (telemCheckCount < 10)
+		{
+			telemCheckCount++;
+		}
+		else
+		{
+			error("Could not open UDP_Telemetry. Exiting.\n");
+		}
+
+		cout << telemCheckCount << endl;
 		///////////////////////////// ^ UDP_Telemetry check ^
 
-		///////////////////////////// v Write to FIFO v
 
+
+		///////////////////////////// v Write to FIFO v
+		//write CAN packet to FIFO for UDP_Telemetry to read
+		//http://stackoverflow.com/questions/2784500/how-to-send-a-simple-string-between-two-programs-using-pipes
+		
+		if (writeFifo(buffer) < 0)
+		{
+			error("write to fifo fail");
+		}		
+		
 		///////////////////////////// ^ Write to FIFO ^
 
 	}
@@ -184,6 +236,8 @@ void receive(char resp)
 }
 int main()
 {
+	//telemCheck();
+
 	///////////////////////////// v reads config file v
 	// reference: http://www.cplusplus.com/doc/tutorial/files/
 	read_config();

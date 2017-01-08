@@ -4,7 +4,5 @@
   Starting remote build
   Compiling sources:
   telem.cpp
-D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Telemetry\telem.cpp(86,6): warning : unused variable ‘_x’ [-Wunused-variable]
-D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Telemetry\telem.cpp(119,12): warning : unused variable ‘s_size’ [-Wunused-variable]
   Linking objects
   UDP_Telemetry.vcxproj -> D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Telemetry\bin\x86\Release\UDP_Telemetry.out

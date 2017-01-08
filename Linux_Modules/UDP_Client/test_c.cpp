@@ -28,15 +28,16 @@ Transmit CAN packet to CAN_UDP_Server (192.168.0.10:4284)
 #include<fstream>
 #include<sstream>
 
+
 using namespace std;
 
 int SERVER_PRT = 4284;
 int CLIENT_PRT = 4283;
-const char* IP_ADR = "192.168.0.10"; //192.168.0.74 is the actual CAN<>Eth gateway IP
+const char* IP_ADR = "192.168.0.19"; //192.168.0.74 is the actual CAN<>Eth gateway IP
 
-void transmit(int x)
+
+void transmit()
 {
-	int _x = x;
 	int sockfd;
 	//sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 	struct sockaddr_in client, server;
@@ -79,7 +80,7 @@ void transmit(int x)
 	datapack = ss_dp.str();
 	char buffer[datapack.size() + 1];
 
-	cout << datapack << endl;
+	//cout << datapack << endl;
 
 	int temp = datapack.size();
 
@@ -110,6 +111,7 @@ void transmit(int x)
 
 int main()
 {
+	/*
 	int y;
 	int x = 0;
 	cout << "Enter number of packets to send (7 = continuous): ";
@@ -136,5 +138,12 @@ int main()
 		}
 	}
 	cout << "Done.\n";
+	*/
+	for (int i = 0; i <= 5; i++)
+	{
+		transmit();
+		sleep(1);
+	}
+	return 0;
 }
 
