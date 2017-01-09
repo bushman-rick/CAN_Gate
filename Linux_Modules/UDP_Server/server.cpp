@@ -261,6 +261,7 @@ int main()
 	char resp;
 	bool g = true;
 
+	
 	cout << "Receive? (y/n): " << endl;
 	cin >> resp;
 	if (tolower(resp) == 'n')
@@ -268,6 +269,7 @@ int main()
 		cout << "Exiting..." << endl;
 		return 0;
 	}
+	
 	receive(resp);
 	
 	
