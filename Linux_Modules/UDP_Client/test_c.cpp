@@ -31,8 +31,8 @@ Transmit CAN packet to CAN_UDP_Server (192.168.0.10:4284)
 
 using namespace std;
 
-int SERVER_PRT = 4283;
-int CLIENT_PRT = 4284;
+int SERVER_PRT = 4283; 
+int CLIENT_PRT = 4284; //transmit to
 const char* IP_ADR = "192.168.0.10"; //192.168.0.74 is the actual CAN<>Eth gateway IP
 
 void error(const char *msg)
@@ -123,38 +123,10 @@ void transmit()
 
 int main()
 {
-	/*
-	int y;
-	int x = 0;
-	cout << "Enter number of packets to send (7 = continuous): ";
-	cin >> y;
-	if (y == 7)
+	for (int i = 1; i <= 15; i++)
 	{
-		cout << "Sending packets.\n";
-		do
-		{
-			cout << "Packet " << x + 1 << " sent..." << endl;
-			transmit(x);
-			x++;
-			//sleep(1); //compiles with g++. installed header but no joy.
-		} while (y == 7);
-	}
-	else
-	{
-		cout << "Sending " << y << " packets.\n";
-		for (x = 0; x < y; x++)
-		{
-			transmit(x);
-			cout << "Packet " << x + 1 << " sent..." << endl;
-			//sleep(1); //compiles with g++. installed header but no joy.
-		}
-	}
-	cout << "Done.\n";
-	*/
-	for (int i = 0; i <= 15; i++)
-	{
+		cout << "Packet #" << i << "; Data: ";
 		transmit();
-		cout << "Packet # " << i;
 		sleep(1);
 	}
 	return 0;

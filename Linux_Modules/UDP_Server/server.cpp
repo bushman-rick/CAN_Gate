@@ -9,6 +9,14 @@ Check is UDP_Telemetry is started, if not, start it
 Write to FIFO
 */
 
+/*
+Prototype functionality:
+Receive packet (receive())
+Send packet (transmit())
+Ignore telemCheck() & writeFifo()
+
+*/
+
 //###########################################
 //compile: "g++ server.cpp -o CAN_UDP_Server"
 //###########################################
@@ -27,12 +35,13 @@ Write to FIFO
 #include<netinet/in.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/netinet/in.h.html
 #include<sys/time.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/time.h.html
 #include<fstream>
+#include<sstream>
 #include<sys/stat.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/stat.h.html
 #include<fcntl.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/fcntl.h.html
 
 using namespace std;
 
-int SERVER_PRT; //4284
+int SERVER_PRT; //4284 receive from
 int CLIENT_PRT; //8352
 const char* IP_ADR = "192.168.0.10"; 
 
@@ -86,10 +95,8 @@ int writeFifo(string packet)
 	int fd;
 	const char *fifo = "/home/testo/projects/fifo";
 
-	/* create the FIFO (named pipe) */
 	mkfifo(fifo, 0666);
 
-	/* write "Hi" to the FIFO */
 	fd = open(fifo, O_WRONLY);
 	write(fd, tBuff, sizeof(packet));
 	close(fd);
@@ -103,7 +110,7 @@ int writeFifo(string packet)
 void read_config() 
 {
 	string line;
-	ifstream conf("config"); //~/projects/CAN_UDP_Server/config
+	ifstream conf("/home/testo/projects/CAN_UDP_Server/config"); //~/projects/CAN_UDP_Server/config
 	if (conf.is_open())
 	{
 		while (getline(conf, line))
@@ -136,60 +143,101 @@ void read_config()
 	return;
 }
 
+int transmit(string packet) //for prototype
+{
+	string p_packet = packet;
+	//int p_SERVER_PRT = 8353;
+	int p_CLIENT_PRT = 4281; //transmit to
+	const char* p_IP_ADR = "192.168.0.10"; //192.168.0.18 is the actual destination ip
+
+	int p_sockfd;
+	struct sockaddr_in p_client, p_server;
+
+	p_sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+
+	memset(&p_client, 0, sizeof(p_client));
+	p_client.sin_family = AF_INET;
+	p_client.sin_addr.s_addr = inet_addr(p_IP_ADR);
+	p_client.sin_port = htons(p_CLIENT_PRT);
+
+	int temp = p_packet.size();
+	char buffer[temp + 1];
+
+	for (int a = 0; a <= temp; a++)
+	{
+		buffer[a] = p_packet[a];
+	}
+
+	socklen_t c_size = sizeof(p_client);
+
+	if (sendto(p_sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *) &p_client, c_size) < 0)
+	{
+		error("p_send fail");
+	}
+	else
+	{
+		cout << "Sent to: " << p_IP_ADR << ":" << p_CLIENT_PRT << endl;
+	}
+	close(p_sockfd);
+	return 0;
+}
+
 void receive(char resp)
 {
 	char _resp = resp;
 
-	///////////////////////////// v bind socket v
 
-	int sockfd;
-	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-	if (sockfd < 0)
-	{
-		cout << "error opening socket" << endl;
-	}
-
-	int enable = 1;
-	if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
-		error("setsockopt(SO_REUSEADDR) failed");
-
-	struct sockaddr_in server , client;
-
-	memset(&server, 0, sizeof(server));
-	server.sin_family = AF_INET;
-	server.sin_addr.s_addr = inet_addr(IP_ADR);
-	server.sin_port = htons(SERVER_PRT);
-
-	//memset(&client, 0, sizeof(client));
-	//client.sin_family = AF_INET;
-	//client.sin_addr.s_addr = inet_addr(IP_ADR);
-	//client.sin_port = htons(CLIENT_PRT);
-
-
-	char buffer[256];
-	//socklen_t c_size = sizeof(client);
-	socklen_t s_size = sizeof(server);
-
-	if (bind(sockfd, (struct sockaddr*) &server, s_size) < 0)
-	{
-		error("bind error");
-		// write to syslog()
-		// kill server
-	}
-	///////////////////////////// ^ bind socket ^
 
 	int count = 0;
 	cout << "\nReceiving on: " << IP_ADR << " : " << SERVER_PRT << endl;
 
 	while (_resp == 'y')
 	{
+		///////////////////////////// v bind socket v
+
+		int sockfd;
+		sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+		if (sockfd < 0)
+		{
+			cout << "error opening socket" << endl;
+		}
+
+		int enable = 1;
+		if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
+			error("setsockopt(SO_REUSEADDR) failed");
+
+		struct sockaddr_in server, client;
+
+		memset(&server, 0, sizeof(server));
+		server.sin_family = AF_INET;
+		server.sin_addr.s_addr = inet_addr(IP_ADR);
+		server.sin_port = htons(SERVER_PRT);
+
+		//memset(&client, 0, sizeof(client));
+		//client.sin_family = AF_INET;
+		//client.sin_addr.s_addr = inet_addr(IP_ADR);
+		//client.sin_port = htons(CLIENT_PRT);
+
+
+		char buffer[256];
+		//socklen_t c_size = sizeof(client);
+		socklen_t s_size = sizeof(server);
+
+		if (bind(sockfd, (struct sockaddr*) &server, s_size) < 0)
+		{
+			error("bind error");
+			// write to syslog()
+			// kill server
+		}
+		///////////////////////////// ^ bind socket ^
+
 		count++;
 	
 		///////////////////////////// v receive v
 
 		if (recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)&server, &s_size) < 0)
 		{
-			cout << "ERROR READING FROM SOCKET";
+			error("ERROR READING FROM SOCKET");
 			// write to syslog()
 			// kill server
 			return;
@@ -206,10 +254,18 @@ void receive(char resp)
 		///////////////////////////// ^ Parse CAN packet ^
 
 
+		///////////////////////////// v #prototype# transmit() to Android tablet v
+		//for prototype
+
+		transmit(buffer);
+
+		///////////////////////////// ^ #prototype# transmit() to Android tablet ^
+
 
 		///////////////////////////// v UDP_Telemetry check v
 		//check if UDP_Telemetery (telem.cpp) is running. If not, run it.
-		/*
+
+		/* commented out for prototype
 		if telemCheck() is good, teleCheckCount is reset to 0.
 		If telemCheck is called more than 10 times, something is wrong and error() is called
 		Without this check, telemCheck will spawn as many UDP_Telemetry processess as it can
@@ -236,17 +292,18 @@ void receive(char resp)
 		//write CAN packet to FIFO for UDP_Telemetry to read
 		//http://stackoverflow.com/questions/2784500/how-to-send-a-simple-string-between-two-programs-using-pipes
 		
+		/* commented out for prototype
 		if (writeFifo(buffer) < 0)
 		{
 			error("write to fifo fail");
 		}		
-		
+		*/
+
 		///////////////////////////// ^ Write to FIFO ^
 
+		close(sockfd);
 	}
 	
-
-	close(sockfd);
 }
 int main()
 {
@@ -258,9 +315,10 @@ int main()
 
 	///////////////////////////// ^ reads config file ^
 
-	char resp;
+	char resp = 'y';
 	bool g = true;
 
+	/*
 	cout << "Receive? (y/n): " << endl;
 	cin >> resp;
 	if (tolower(resp) == 'n')
@@ -268,6 +326,7 @@ int main()
 		cout << "Exiting..." << endl;
 		return 0;
 	}
+	*/
 	receive(resp);
 	
 	

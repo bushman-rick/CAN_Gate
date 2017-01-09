@@ -1,0 +1,9 @@
+﻿  Validating architecture
+  Validating sources
+  Copying sources remotely
+  Starting remote build
+  Compiling sources:
+  test_g.cpp
+D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\test_general\test_g.cpp(30,27): warning : ignoring return value of ‘ssize_t read(int, void*, size_t)’, declared with attribute warn_unused_result [-Wunused-result]
+  Linking objects
+  test_general.vcxproj -> D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\test_general\bin\x86\Release\test_general.out
