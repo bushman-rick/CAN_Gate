@@ -36,10 +36,9 @@ Ignore telemCheck() & writeFifo()
 using namespace std;
 
 int SERVER_PRT; //4284 receive from
-int CLIENT_PRT; //8352
 const char* IP_ADR = "192.168.0.10"; 
 
-int telemCheckCount = 0;
+//int telemCheckCount = 0;                                                       // not used for prototype
 
 void error(const char *msg)
 {
@@ -155,14 +154,14 @@ int transmit(string packet) //for prototype
 	int temp = p_packet.size();
 	char buffer[temp + 1];
 
-	for (int a = 0; a <= temp; a++)
+	for (int a = 0; a <= temp; a++) //assembles packet
 	{
 		buffer[a] = p_packet[a];
 	}
 
 	socklen_t c_size = sizeof(p_client);
 
-	if (sendto(p_sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *) &p_client, c_size) < 0)
+	if (sendto(p_sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *) &p_client, c_size) < 0) //sends packet
 	{
 		error("p_send fail");
 	}
