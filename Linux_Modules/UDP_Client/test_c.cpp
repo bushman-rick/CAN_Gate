@@ -6,6 +6,11 @@ Generate simulated CAN packet
 Transmit CAN packet to CAN_UDP_Server (192.168.0.10:4284)
 */
 
+/*
+TODO:
+- socket init outside of loop
+*/
+
 #include<iostream>
 #include<arpa/inet.h> //source: http://unix.superglobalmegacorp.com/xnu/newsrc/bsd/include/arpa/inet.h.html
 #include<unistd.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/unistd.h.html
@@ -45,7 +50,7 @@ void transmit()
 	client.sin_port = htons(CLIENT_PRT);
 
 	//Assemble CAN packet vv (this is probably not correct...)
-	
+	// set up relevant data types
 	string ts_hi = "22220 ";
 	string ts_lo = "11110 ";
 	string ide = "1 ";

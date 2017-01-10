@@ -14,6 +14,13 @@ Ignore telemCheck() & writeFifo()
 
 */
 
+/*
+TODO:
+- send/receive data as relevant data type
+- move socket initialisation out of loop for receive() & transmit()
+*/
+
+
 //###########################################
 //compile: "g++ server.cpp -o CAN_UDP_Server"
 //###########################################
@@ -47,6 +54,7 @@ void error(const char *msg)
 	exit(1);
 }
 
+//telemCheck()
 /*
 int telemCheck()                                                                  // not used for prototype
 {
@@ -77,6 +85,7 @@ int telemCheck()                                                                
 }
 */
 
+//writeFifo()
 /*
 int writeFifo(string packet)                                                     //not used for prototype
 {
@@ -214,7 +223,8 @@ void receive()
 		count++;
 	
 		///////////////////////////// v receive v
-
+		//move the below loop into the loop and socket init outsdie of loop
+		//############################################################################# while{
 		if (recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)&server, &s_size) < 0)
 		{
 			error("receive error");
@@ -244,7 +254,7 @@ void receive()
 		}
 
 		///////////////////////////// ^ transmit() to Android tablet ^
-
+		//############################################################################ }endwhile
 
 		///////////////////////////// v UDP_Telemetry check v                           disabled for prototype
 		//check if UDP_Telemetery (telem.cpp) is running. If not, run it.

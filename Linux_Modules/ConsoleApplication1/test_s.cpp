@@ -6,6 +6,11 @@ Receive UDP packet from UDP_Telemetry (CAN_UDP_Telemetry for prototype) (192.168
 Display the packet or something
 */
 
+/*
+TODO:
+- take socket intialisation out of loop
+*/
+
 #include<iostream>
 #include<arpa/inet.h> //source: http://unix.superglobalmegacorp.com/xnu/newsrc/bsd/include/arpa/inet.h.html
 #include<unistd.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/unistd.h.html
