@@ -42,6 +42,7 @@ const int FIFO_BUFF = 1024;
 void error(const char *msg)
 {
 	perror(msg);
+	//write to syslog
 	exit(1);
 }
 

@@ -1,19 +1,10 @@
 ﻿//this is used to test CAN_UDP_Sevrer by acting as the CAN to Ethernet Gateway
 
-
-
 /*
 Function:
 Generate simulated CAN packet
 Transmit CAN packet to CAN_UDP_Server (192.168.0.10:4284)
 */
-
-
-
-
-
-
-
 
 #include<iostream>
 #include<arpa/inet.h> //source: http://unix.superglobalmegacorp.com/xnu/newsrc/bsd/include/arpa/inet.h.html
@@ -28,7 +19,6 @@ Transmit CAN packet to CAN_UDP_Server (192.168.0.10:4284)
 #include<fstream>
 #include<sstream>
 
-
 using namespace std;
 
 int SERVER_PRT = 4283; 
@@ -38,46 +28,28 @@ const char* IP_ADR = "192.168.0.10"; //192.168.0.74 is the actual CAN<>Eth gatew
 void error(const char *msg)
 {
 	perror(msg);
+	//write to syslog
 	exit(1);
 }
 
 void transmit()
 {
 	int sockfd;
-	//sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-	struct sockaddr_in client, server;
+	struct sockaddr_in client;
 
-
-	//if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
-	//{
-	//cout << "socket fail" << endl;
-	//perror("socket fail");
-	//exit(1);
-	//}
 	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 
 	memset(&client, 0, sizeof(client));
 	client.sin_family = AF_INET;
 	client.sin_addr.s_addr = inet_addr(IP_ADR);
-	client.sin_port = htons(SERVER_PRT);
-
-	memset(&server, 0, sizeof(server));
-	server.sin_family = AF_INET;
-	server.sin_addr.s_addr = htonl(INADDR_ANY);
-	server.sin_port = htons(CLIENT_PRT);
+	client.sin_port = htons(CLIENT_PRT);
 
 	//Assemble CAN packet vv (this is probably not correct...)
+	
 	string ts_hi = "22220 ";
 	string ts_lo = "11110 ";
 	string ide = "1 ";
 	string type = "0 ";
-	/*
-		Type of frame:
-			Data Frame	0
-			Remote Frame	1
-			Bus Error	6
-			Transceiver Fault  7
-	*/
 	string data[] = { "10001 ","10002 ","10003 ","10004 ","10005 ","10006 " };
 	string datapack;
 	stringstream ss_dp;
@@ -86,31 +58,16 @@ void transmit()
 	int temp = datapack.size();
 	char buffer[temp + 1];
 
-	//cout << datapack << endl;
-
-
-
 	for (int a = 0; a <= temp; a++)
 	{
 		buffer[a] = datapack[a];
 	}
-
+	
 	//Assemble CAN packet ^^
 
-	socklen_t s_size = sizeof(server);
 	socklen_t c_size = sizeof(client);
 
-	///////////////////////////// v bind socket v
-	if (bind(sockfd, (struct sockaddr *) &client, c_size) < 0)
-	{
-		error("bind fail");
-		// write to syslog()
-		// kill telem
-		return;
-	}
-	///////////////////////////// ^ bind socket ^
-
-	if (sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *) &server, s_size) < 0)
+	if (sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *) &client, c_size) < 0)
 	{
 		error("send fail");
 	}
@@ -131,4 +88,3 @@ int main()
 	}
 	return 0;
 }
-

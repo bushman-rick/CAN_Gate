@@ -4,12 +4,5 @@
   Copying sources remotely
   Starting remote build
   Compiling sources:
-  server.cpp
-D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Server\server.cpp(78,9): warning : unused variable ‘handle’ [-Wunused-variable]
-D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Server\server.cpp(154,31): warning : unused variable ‘p_server’ [-Wunused-variable]
-D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Server\server.cpp(217,30): warning : unused variable ‘client’ [-Wunused-variable]
-D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Server\server.cpp(327,7): warning : unused variable ‘g’ [-Wunused-variable]
-D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Server\server.cpp(62,19): warning : ignoring return value of ‘int system(const char*)’, declared with attribute warn_unused_result [-Wunused-result]
-D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Server\server.cpp(101,34): warning : ignoring return value of ‘ssize_t write(int, const void*, size_t)’, declared with attribute warn_unused_result [-Wunused-result]
   Linking objects
   UDP_Server.vcxproj -> D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Server\bin\x86\Release\CAN_UDP_Server.out
