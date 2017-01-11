@@ -17,7 +17,9 @@ Ignore telemCheck() & writeFifo()
 /*
 TODO:
 - send/receive data as relevant data type
-- move socket initialisation out of loop for receive() & transmit()
+- set some kind of exit condition that isnt Ctrl+C for the loop in receive()
+- (done) move socket initialisation out of loop for receive() & transmit()
+- (done) read IP_ADR from config file 
 */
 
 
@@ -43,9 +45,14 @@ TODO:
 using namespace std;
 
 int SERVER_PRT; //4284 receive from
-const char* IP_ADR = "192.168.0.10"; 
+const char* IP_ADR; //IP of the netbook 
 
-//int telemCheckCount = 0;                                                       // not used for prototype
+//int telemCheckCount = 0;             // not used for prototype
+
+struct sockaddr_in p_client;
+int p_CLIENT_PRT = 4281; //transmit to
+const char* p_IP_ADR = "192.168.0.10"; //192.168.0.18 is the actual destination ip
+int p_sockfd;
 
 void error(const char *msg)
 {
@@ -116,20 +123,29 @@ int writeFifo(string packet)                                                    
 void read_config() 
 {
 	string line;
-	ifstream conf("/home/testo/projects/CAN_UDP_Server/config");
-	if (conf.is_open())
+	ifstream conf("/home/testo/projects/CAN_UDP_Server/config"); //config file location on netbook
+	if (conf.is_open() < 0) //open config
 	{
-		while (getline(conf, line))
+		error("Unable to open file");
+	}
+	else
+	{
+		while (getline(conf, line)) //read the first line and copy to 'line'
 		{
-			if (line == "SERVER_PRT")
+			if (line == "SERVER_PRT") //if line = SERVER_PRT...
 			{
-				getline(conf, line);
-				SERVER_PRT = atoi(line.c_str()); //convert string to int
+				getline(conf, line); //...go to the next line and copy to 'line'...
+				SERVER_PRT = atoi(line.c_str()); //...convert string in 'line' to int and copy to 'SERVER_PRT'
 			}
 			else if (line == "IP_ADR")
 			{
 				getline(conf, line);
-				//IP_ADR = line.c_str(); //convert string to const char* //// I couldnt get this to work ie read the ip from the file 
+
+				int temp = sizeof(line);
+				for (int a = 0; a <= temp; a++)
+				{
+					line[a] = IP_ADR[a];
+				}
 			}
 		}
 		cout << "config read:" << endl;
@@ -137,29 +153,23 @@ void read_config()
 		cout << "IP: " << IP_ADR << endl;
 		conf.close();
 	}
-	else
-	{
-		error("Unable to open file");
-	}
 	return;
 }
 
-int transmit(string packet) //for prototype
+int transmit_init() //for prototype
 {
-	string p_packet = packet;
-	int p_CLIENT_PRT = 4281; //transmit to
-	const char* p_IP_ADR = "192.168.0.10"; //192.168.0.18 is the actual destination ip
-
-	int p_sockfd;
-	struct sockaddr_in p_client;
-
 	p_sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 
 	memset(&p_client, 0, sizeof(p_client));
 	p_client.sin_family = AF_INET;
 	p_client.sin_addr.s_addr = inet_addr(p_IP_ADR);
 	p_client.sin_port = htons(p_CLIENT_PRT);
+	return 0;
+}
 
+int transmit_send(string packet)
+{
+	string p_packet = packet;
 	int temp = p_packet.size();
 	char buffer[temp + 1];
 
@@ -178,7 +188,7 @@ int transmit(string packet) //for prototype
 	{
 		cout << "Sent to: " << p_IP_ADR << ":" << p_CLIENT_PRT << endl;
 	}
-	close(p_sockfd);
+	//close(p_sockfd);
 	return 0;
 }
 
@@ -189,8 +199,7 @@ void receive()
 	int count = 0;
 	cout << "\nReceiving on: " << IP_ADR << " : " << SERVER_PRT << endl;
 
-	while (_resp == 'y') //edit loop so that when a particular signal is received, this program terminates??
-	{
+
 		///////////////////////////// v bind socket v
 
 		int sockfd;
@@ -220,41 +229,51 @@ void receive()
 		}
 		///////////////////////////// ^ bind socket ^
 
-		count++;
-	
+		if (transmit_init() < 0)
+		{
+			error("transmit_init error");
+		}
+
+
 		///////////////////////////// v receive v
 		//move the below loop into the loop and socket init outsdie of loop
-		//############################################################################# while{
-		if (recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)&server, &s_size) < 0)
+		while (_resp == 'y') //edit loop so that when a particular signal is received, this program terminates??
 		{
-			error("receive error");
-			return;
+			count++;
+			if (recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *)&server, &s_size) < 0)
+			{
+				error("receive error");
+				return;
+			}
+
+			///////////////////////////// ^ receive ^
+
+
+
+			///////////////////////////// v Parse CAN packet v
+			//Probably can/needs to be be expanded??
+
+			cout << "Packet #" << count << "; Data: " << buffer << endl;
+
+			///////////////////////////// ^ Parse CAN packet ^
+
+
+			///////////////////////////// v transmit() to Android tablet v
+			//for prototype
+
+			
+			if (transmit_send(buffer) < 0)
+			{
+				error("transmit_init error");
+			}
+
+			for (unsigned int a = 0; a <= sizeof(buffer); a++) //reset buffer
+			{
+				buffer[a] = '\0';
+			}
+
+			///////////////////////////// ^ transmit() to Android tablet ^
 		}
-
-		///////////////////////////// ^ receive ^
-
-
-
-		///////////////////////////// v Parse CAN packet v
-		//Probably can/needs to be be expanded??
-
-		cout << "Packet #" << count << "; Data: " << buffer << endl;
-		
-		///////////////////////////// ^ Parse CAN packet ^
-
-
-		///////////////////////////// v transmit() to Android tablet v
-		//for prototype
-
-		transmit(buffer);
-
-		for (unsigned int a = 0; a <= sizeof(buffer); a++) //reset buffer
-		{
-			buffer[a] = '\0';
-		}
-
-		///////////////////////////// ^ transmit() to Android tablet ^
-		//############################################################################ }endwhile
 
 		///////////////////////////// v UDP_Telemetry check v                           disabled for prototype
 		//check if UDP_Telemetery (telem.cpp) is running. If not, run it.
@@ -295,9 +314,7 @@ void receive()
 
 		///////////////////////////// ^ Write to FIFO ^
 
-		close(sockfd);
-	}
-	
+		close(sockfd);	
 }
 int main()
 {
@@ -306,7 +323,6 @@ int main()
 	///////////////////////////// v reads config file v
 	// reference: http://www.cplusplus.com/doc/tutorial/files/
 	read_config();
-
 	///////////////////////////// ^ reads config file ^
 
 	receive();

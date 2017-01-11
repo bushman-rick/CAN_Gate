@@ -70,6 +70,12 @@ void read_config()
 	ifstream conf(path);
 	if (conf.is_open())
 	{
+		error("Unable to open file");
+		// write to syslog()
+		// kill server
+	}
+	else
+	{
 		while (getline(conf, line))
 		{
 			if (line == "SERVER_PRT")
@@ -85,7 +91,12 @@ void read_config()
 			else if (line == "IP_ADR")
 			{
 				getline(conf, line);
-				//IP_ADR = line.c_str(); //convert string to const char* //// I couldnt get this to work ie read the ip from the file 
+
+				int temp = sizeof(line);
+				for (int a = 0; a <= temp; a++)
+				{
+					line[a] = IP_ADR[a];
+				}
 			}
 		}
 		//cout << "config read:" << endl;
@@ -93,12 +104,6 @@ void read_config()
 		//cout << "Source port: " << CLIENT_PRT << endl;
 		//cout << "IP: " << IP_ADR << endl;
 		conf.close();
-	}
-	else
-	{
-		error("Unable to open file");
-		// write to syslog()
-		// kill server
 	}
 	return;
 }

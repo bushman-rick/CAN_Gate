@@ -8,7 +8,8 @@ Transmit CAN packet to CAN_UDP_Server (192.168.0.10:4284)
 
 /*
 TODO:
-- socket init outside of loop
+- socket init outside of loop (done)
+- send data as relevant data type
 */
 
 #include<iostream>
@@ -26,7 +27,6 @@ TODO:
 
 using namespace std;
 
-int SERVER_PRT = 4283; 
 int CLIENT_PRT = 4284; //transmit to
 const char* IP_ADR = "192.168.0.10"; //192.168.0.74 is the actual CAN<>Eth gateway IP
 
@@ -37,8 +37,9 @@ void error(const char *msg)
 	exit(1);
 }
 
-void transmit()
+void transmit(int pCount)
 {
+	int _pCount = pCount;
 	int sockfd;
 	struct sockaddr_in client;
 
@@ -72,24 +73,27 @@ void transmit()
 
 	socklen_t c_size = sizeof(client);
 
-	if (sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *) &client, c_size) < 0)
+	for (int i = 1; i <= _pCount; i++)
 	{
-		error("send fail");
+		cout << "Packet #" << i << "; Data: ";
+		if (sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *) &client, c_size) < 0)
+		{
+			error("send fail");
+		}
+		else
+		{
+			cout << buffer << endl;
+		}
+		sleep(1);
 	}
-	else
-	{
-		cout << buffer << endl;
-	}
+
 	close(sockfd);
 }
 
 int main()
 {
-	for (int i = 1; i <= 15; i++)
-	{
-		cout << "Packet #" << i << "; Data: ";
-		transmit();
-		sleep(1);
-	}
+	int pCount = 15; //number of packets to be transmitted
+	transmit(pCount);
+
 	return 0;
 }

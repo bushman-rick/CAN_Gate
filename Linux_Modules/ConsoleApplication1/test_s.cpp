@@ -8,7 +8,9 @@ Display the packet or something
 
 /*
 TODO:
-- take socket intialisation out of loop
+- receive data as relevant data type
+- set some kind of exit condition that isnt Ctrl+C for the loop in receive()
+- (done) take socket intialisation out of loop 
 */
 
 #include<iostream>
@@ -45,39 +47,39 @@ void receive(char resp)
 	int count = 0;
 	cout << "\nReceiving on: " << IP_ADR << " : " << SERVER_PRT << endl;
 
+	///////////////////////////// v bind socket v
+
+	int sockfd;
+	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+	if (sockfd < 0)
+	{
+		cout << "error opening socket" << endl;
+	}
+
+	int enable = 1;
+	if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
+	{
+		error("setsockopt(SO_REUSEADDR) failed");
+	}
+
+	struct sockaddr_in server, client;
+
+	memset(&server, 0, sizeof(server));
+	server.sin_family = AF_INET;
+	server.sin_addr.s_addr = inet_addr(IP_ADR);
+	server.sin_port = htons(SERVER_PRT);
+
+	char buffer[256];
+	socklen_t s_size = sizeof(server);
+
+	if (bind(sockfd, (struct sockaddr*) &server, s_size) < 0)
+	{
+		error("bind error");
+	}
+	///////////////////////////// ^ bind socket ^
+
 	while (_resp == 'y')
 	{
-		///////////////////////////// v bind socket v
-
-		int sockfd;
-		sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-		if (sockfd < 0)
-		{
-			cout << "error opening socket" << endl;
-		}
-
-		int enable = 1;
-		if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
-		{
-			error("setsockopt(SO_REUSEADDR) failed");
-		}
-
-		struct sockaddr_in server, client;
-
-		memset(&server, 0, sizeof(server));
-		server.sin_family = AF_INET;
-		server.sin_addr.s_addr = inet_addr(IP_ADR);
-		server.sin_port = htons(SERVER_PRT);
-
-		char buffer[256];
-		socklen_t s_size = sizeof(server);
-
-		if (bind(sockfd, (struct sockaddr*) &server, s_size) < 0)
-		{
-			error("bind error");
-		}
-		///////////////////////////// ^ bind socket ^
-
 		count++;
 
 		///////////////////////////// v receive v
@@ -91,10 +93,8 @@ void receive(char resp)
 		}
 		cout << "Packet #" << count << "; Data: " << buffer << endl;
 		///////////////////////////// ^ receive ^
-
-		close(sockfd);
 	}
-
+	close(sockfd); //this wont get hit unless an exit condition is reached
 }
 int main()
 {
