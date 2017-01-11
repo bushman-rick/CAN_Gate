@@ -124,6 +124,7 @@ void read_config()
 {
 	string line;
 	ifstream conf("/home/testo/projects/CAN_UDP_Server/config"); //config file location on netbook
+	cout << "fido" << endl;
 	if (conf.is_open() < 0) //open config
 	{
 		error("Unable to open file");
