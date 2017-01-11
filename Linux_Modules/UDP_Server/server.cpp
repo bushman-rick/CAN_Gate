@@ -45,7 +45,7 @@ TODO:
 using namespace std;
 
 int SERVER_PRT; //4284 receive from
-const char* IP_ADR; //IP of the netbook 
+string IP_ADR; // = "192.168.0.10"; //IP of the netbook 
 
 //int telemCheckCount = 0;             // not used for prototype
 
@@ -124,7 +124,6 @@ void read_config()
 {
 	string line;
 	ifstream conf("/home/testo/projects/CAN_UDP_Server/config"); //config file location on netbook
-	cout << "fido" << endl;
 	if (conf.is_open() < 0) //open config
 	{
 		error("Unable to open file");
@@ -138,15 +137,10 @@ void read_config()
 				getline(conf, line); //...go to the next line and copy to 'line'...
 				SERVER_PRT = atoi(line.c_str()); //...convert string in 'line' to int and copy to 'SERVER_PRT'
 			}
-			else if (line == "IP_ADR")
+			else if (line == "IP_ADR") // works the same as above but...
 			{
 				getline(conf, line);
-
-				int temp = sizeof(line);
-				for (int a = 0; a <= temp; a++)
-				{
-					line[a] = IP_ADR[a];
-				}
+				IP_ADR = line.c_str();// handles 'line' to 'IP_ADR' slightly differently (this took waaaay to long to figure out...)
 			}
 		}
 		cout << "config read:" << endl;
@@ -218,7 +212,7 @@ void receive()
 
 		memset(&server, 0, sizeof(server));
 		server.sin_family = AF_INET;
-		server.sin_addr.s_addr = inet_addr(IP_ADR);
+		server.sin_addr.s_addr = inet_addr(IP_ADR.c_str());
 		server.sin_port = htons(SERVER_PRT);
 
 		char buffer[64];

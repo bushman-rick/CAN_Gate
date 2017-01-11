@@ -1,3 +1,10 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Server\obj\x86\Release\) contains files shared from another project (UDP_Server.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   Validating architecture
-C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Application Type\Linux\1.0\Linux.Common.targets(51,5): error : Could not connect to the remote system. Please verify your connection settings, and that your machine is on the network and reachable.
+  Validating sources
+  Copying sources remotely
+  Starting remote build
+  Compiling sources:
+  server.cpp
+D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Server\server.cpp(267,21): warning : iteration 64u invokes undefined behavior [-Waggressive-loop-optimizations]
+  Linking objects
+  UDP_Server.vcxproj -> D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Server\bin\x86\Release\CAN_UDP_Server.out
