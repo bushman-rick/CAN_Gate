@@ -5,6 +5,6 @@
   Starting remote build
   Compiling sources:
   server.cpp
-D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Server\server.cpp(267,21): warning : iteration 64u invokes undefined behavior [-Waggressive-loop-optimizations]
+D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Server\server.cpp(276,21): warning : iteration 20u invokes undefined behavior [-Waggressive-loop-optimizations]
   Linking objects
   UDP_Server.vcxproj -> D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\UDP_Server\bin\x86\Release\CAN_UDP_Server.out

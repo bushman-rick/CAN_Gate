@@ -215,7 +215,7 @@ void receive()
 		server.sin_addr.s_addr = inet_addr(IP_ADR.c_str());
 		server.sin_port = htons(SERVER_PRT);
 
-		char buffer[64];
+		char buffer[20];
 		socklen_t s_size = sizeof(server);
 
 		if (bind(sockfd, (struct sockaddr*) &server, s_size) < 0)
@@ -242,11 +242,20 @@ void receive()
 			}
 
 			///////////////////////////// ^ receive ^
+			//string message = buffer;
+			//istringstream s_buff(message);
+			//int n;
+			//s_buff >> hex >> n;
+			//cout << "Message: " << n << endl;
 
-
+			//for (int a = 0; a <= sizeof(buffer); a++)
+			//{
+			//	message[a] = strtol(buffer, NULL, 16);
+			//}
 
 			///////////////////////////// v Parse CAN packet v
 			//Probably can/needs to be be expanded??
+
 
 			cout << "Packet #" << count << "; Data: " << buffer << endl;
 

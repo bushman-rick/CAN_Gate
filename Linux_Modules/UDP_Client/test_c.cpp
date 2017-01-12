@@ -8,7 +8,7 @@ Transmit CAN packet to CAN_UDP_Server (192.168.0.10:4284)
 
 /*
 TODO:
-- socket init outside of loop (done)
+- (done) socket init outside of loop 
 - send data as relevant data type
 */
 
@@ -52,42 +52,49 @@ void transmit(int pCount)
 	client.sin_port = htons(CLIENT_PRT);
 
 	//Assemble CAN packet vv (this is probably not correct...)
-	// set up relevant data types
-
-	//binary string: 01110100011010000110010101110001011101010110100101100011011010110110001001110010011011110111011101101110011001100110111101111000011010100111010101101101011100000110010101100100011011110111011001100101011100100111010001101000011001010110011001100101011011100110001101100101
-
+	string datapack;
+	stringstream ss_dp;
+	/*
 	string ts_hi = "22220 ";
 	string ts_lo = "11110 ";
 	string ide = "1 ";
 	string type = "0 ";
 	string data[] = { "10001 ","10002 ","10003 ","10004 ","10005 ","10006 " };
-	string datapack;
-	stringstream ss_dp;
+
+
 	ss_dp << ts_hi << ts_lo << ide << type << data[0] << data[1] << data[2] << data[3] << data[4] << data[5];
-	//ss_dp << "01110100011010000110010101110001011101010110100101100011011010110110001001110010011011110111011101101110011001100110111101111000011010100111010101101101011100000110010101100100011011110111011001100101011100100111010001101000011001010110011001100101011011100110001101100101";
+	
+
+
 	datapack = ss_dp.str();
 	int temp = datapack.size();
 	char buffer[temp + 1];
-
+	
 	for (int a = 0; a <= temp; a++)
 	{
 		buffer[a] = datapack[a];
 	}
-	
+	*/
+
+
 	//Assemble CAN packet ^^
+
+	//char message[20] = { 0x5f, 0x52, 0x69, 0x63, 0x6b, 0x5f, 0x53, 0x69, 0x6d, 0x6f, 0x6e, 0x5f, 0x43, 0x61, 0x6d, 0x65, 0x72, 0x6f, 0x6e, 0x5f };
+	char message[20] = { 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x05 };
+
 
 	socklen_t c_size = sizeof(client);
 
 	for (int i = 1; i <= _pCount; i++)
 	{
 		cout << "Packet #" << i << "; Data: ";
-		if (sendto(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr *) &client, c_size) < 0)
+		if (sendto(sockfd, message, sizeof(message), 0, (struct sockaddr *) &client, c_size) < 0)
 		{
 			error("send fail");
 		}
 		else
 		{
-			cout << buffer << endl;
+			cout << message << endl;
 		}
 		sleep(1);
 	}
@@ -97,7 +104,7 @@ void transmit(int pCount)
 
 int main()
 {
-	int pCount = 15; //number of packets to be transmitted
+	int pCount = 3; //number of packets to be transmitted
 	transmit(pCount);
 
 	return 0;

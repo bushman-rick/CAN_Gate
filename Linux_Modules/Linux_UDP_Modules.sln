@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_server", "ConsoleAppli
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_general", "test_general\test_general.vcxproj", "{0EAFD927-21EE-4ABB-B7E7-482D5FF17577}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleApplication2", "ConsoleApplication2\ConsoleApplication2.vcxproj", "{17D45353-4F87-4D61-8F9C-31C706BDC77E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -97,6 +99,16 @@ Global
 		{0EAFD927-21EE-4ABB-B7E7-482D5FF17577}.Release|x64.Build.0 = Release|x64
 		{0EAFD927-21EE-4ABB-B7E7-482D5FF17577}.Release|x86.ActiveCfg = Release|x86
 		{0EAFD927-21EE-4ABB-B7E7-482D5FF17577}.Release|x86.Build.0 = Release|x86
+		{17D45353-4F87-4D61-8F9C-31C706BDC77E}.Debug|ARM.ActiveCfg = Debug|Win32
+		{17D45353-4F87-4D61-8F9C-31C706BDC77E}.Debug|x64.ActiveCfg = Debug|x64
+		{17D45353-4F87-4D61-8F9C-31C706BDC77E}.Debug|x64.Build.0 = Debug|x64
+		{17D45353-4F87-4D61-8F9C-31C706BDC77E}.Debug|x86.ActiveCfg = Debug|Win32
+		{17D45353-4F87-4D61-8F9C-31C706BDC77E}.Debug|x86.Build.0 = Debug|Win32
+		{17D45353-4F87-4D61-8F9C-31C706BDC77E}.Release|ARM.ActiveCfg = Release|Win32
+		{17D45353-4F87-4D61-8F9C-31C706BDC77E}.Release|x64.ActiveCfg = Release|x64
+		{17D45353-4F87-4D61-8F9C-31C706BDC77E}.Release|x64.Build.0 = Release|x64
+		{17D45353-4F87-4D61-8F9C-31C706BDC77E}.Release|x86.ActiveCfg = Release|Win32
+		{17D45353-4F87-4D61-8F9C-31C706BDC77E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
