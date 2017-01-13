@@ -201,7 +201,7 @@ void receive()
 		sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 		if (sockfd < 0)
 		{
-			cout << "error opening socket" << endl;
+			error("error opening socket");
 		}
 
 		int enable = 1;
