@@ -1,0 +1,9 @@
+﻿  Validating architecture
+  Validating sources
+  Copying sources remotely
+  Starting remote build
+  Compiling sources:
+  Stream_info.cpp
+D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\Infotainment_Prototype\Infotainment_Prototype\Stream_info.cpp(123,20): warning : iteration 20u invokes undefined behavior [-Waggressive-loop-optimizations]
+  Linking objects
+  Infotainment_Prototype.vcxproj -> D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\Infotainment_Prototype\Infotainment_Prototype\bin\x86\Release\Infotainment_Prototype.out

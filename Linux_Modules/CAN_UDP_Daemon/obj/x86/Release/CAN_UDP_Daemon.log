@@ -1,8 +1,0 @@
-﻿  Validating architecture
-  Validating sources
-  Copying sources remotely
-  Starting remote build
-  Compiling sources:
-  daemon.cpp
-  Linking objects
-  CAN_UDP_Daemon.vcxproj -> D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules\CAN_UDP_Daemon\bin\x86\Release\CAN_UDP_Daemon.out
