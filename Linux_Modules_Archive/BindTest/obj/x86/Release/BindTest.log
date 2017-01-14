@@ -1,9 +1,0 @@
-﻿  Validating architecture
-  Validating sources
-  Copying sources remotely to 'cangate.ddns.net'
-  Starting remote build
-  Compiling sources:
-  bindTest.cpp
-D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules_Archive\BindTest\bindTest.cpp(74,7): warning : unused variable ‘buffer’ [-Wunused-variable]
-  Linking objects
-  BindTest.vcxproj -> D:\Deakin\2016_SIT302\SIT302-CAN_Gate\SIT302-CAN_Gate\Linux_Modules_Archive\BindTest\bin\x86\Release\BindTest.out
