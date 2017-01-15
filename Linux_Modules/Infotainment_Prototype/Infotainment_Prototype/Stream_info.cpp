@@ -76,31 +76,6 @@ int process_init()
 	client_init();
 }
 
-//int transmit_send(string packet)
-//{
-//	string p_packet = packet;
-//	int temp = p_packet.size();
-//	char buffer[temp + 1];
-//
-//	for (int a = 0; a <= temp; a++) //assembles packet
-//	{
-//		buffer[a] = p_packet[a];
-//	}
-//
-//	socklen_t c_size = sizeof(client_socket);
-//
-//	if (sendto(client_socket_id, buffer, sizeof(buffer), 0, (struct sockaddr *) &client_socket, c_size) < 0) //sends packet
-//	{
-//		error("p_send fail");
-//	}
-//	else
-//	{
-//		cout << "Sent to: " << p_IP_ADR << ":" << p_CLIENT_PRT << endl;
-//	}
-//	//close(client_socket_id);
-//	return 0;
-//}
-
 void run()
 {
 	int count = 0;
