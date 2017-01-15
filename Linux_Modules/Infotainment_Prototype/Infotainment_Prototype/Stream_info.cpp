@@ -112,8 +112,6 @@ void run()
 
 		//*************************************************************************************************************
 		// test into processing code, to be moved into it's own function when working
-		
-
 		// CORRECT ENDIANNESS
 		// inbound is a array of U32 so elements are 4 bytes long.
 		const int ELEMENT_SIZE = 4;
