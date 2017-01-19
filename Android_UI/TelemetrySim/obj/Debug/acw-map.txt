@@ -1,8 +1,0 @@
-TelemetrySim.MainActivity, TelemetrySim;md53a87a0a31baefec94a071a31a67a9fea.MainActivity
-TelemetrySim.MainActivity, TelemetrySim, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;md53a87a0a31baefec94a071a31a67a9fea.MainActivity
-TelemetrySim.MainActivity;md53a87a0a31baefec94a071a31a67a9fea.MainActivity
-telemetrysim.MainActivity;md53a87a0a31baefec94a071a31a67a9fea.MainActivity
-TelemetrySim.TelemetryActivity, TelemetrySim;md53a87a0a31baefec94a071a31a67a9fea.TelemetryActivity
-TelemetrySim.TelemetryActivity, TelemetrySim, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null;md53a87a0a31baefec94a071a31a67a9fea.TelemetryActivity
-TelemetrySim.TelemetryActivity;md53a87a0a31baefec94a071a31a67a9fea.TelemetryActivity
-telemetrysim.TelemetryActivity;md53a87a0a31baefec94a071a31a67a9fea.TelemetryActivity

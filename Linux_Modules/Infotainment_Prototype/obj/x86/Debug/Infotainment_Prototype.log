@@ -1,0 +1,11 @@
+﻿  Validating architecture
+  Validating sources
+  Copying sources remotely
+  Starting remote build
+  Compiling sources:
+  Stream_info.cpp
+C:\Users\PrimaryUser\Media\Dropbox\Deakin\2016\SIT302\Source\SIT302-CAN_Gate\Linux_Modules\Infotainment_Prototype\Infotainment_Prototype\Stream_info.cpp(49,43): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+C:\Users\PrimaryUser\Media\Dropbox\Deakin\2016\SIT302\Source\SIT302-CAN_Gate\Linux_Modules\Infotainment_Prototype\Infotainment_Prototype\Stream_info.cpp(68,45): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
+C:\Users\PrimaryUser\Media\Dropbox\Deakin\2016\SIT302\Source\SIT302-CAN_Gate\Linux_Modules\Infotainment_Prototype\Infotainment_Prototype\Stream_info.cpp(77,1): warning : no return statement in function returning non-void [-Wreturn-type]
+  Linking objects
+  Infotainment_Prototype.vcxproj -> C:\Users\PrimaryUser\Media\Dropbox\Deakin\2016\SIT302\Source\SIT302-CAN_Gate\Linux_Modules\Infotainment_Prototype\Infotainment_Prototype\bin\x86\Debug\Infotainment_Prototype.out

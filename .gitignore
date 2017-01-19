@@ -2,11 +2,9 @@
 *.suo
 *.VC.db
 *VC.opendb
-Linux_Modules/Infotainment_Prototype/Infotainment_Prototype/obj/ARM/Debug/Infotainment_Prototype.log
-Linux_Modules/Infotainment_Prototype/Infotainment_Prototype/obj/ARM/Debug/Infotain.ef1b9208.tlog/Infotainment_Prototype.lastbuildstate
-/Linux_Modules/Infotainment_Prototype/Infotainment_Prototype/bin/x86/Debug
+*.vcxproj.user
+/Linux_Modules/Infotainment_Prototype/Infotainment_Prototype/bin/
 /Linux_Modules/Infotainment_Prototype/Infotainment_Prototype/obj
 /Linux_Modules/Infotainment_Prototype/Infotainment_Prototype/Infotainment_Prototype.log
-/Linux_Modules/Infotainment_Prototype/Infotainment_Prototype.VC (WhiteCube's conflicted copy 2017-01-15).db
-/Android_UI/TelemetrySim/bin/Debug
-/Android_UI/TelemetrySim/TelemetrySim.csproj.user
+/Android_UI/TelemetrySim(C#)/bin
+/Android_UI/TelemetrySim(C#)/obj
