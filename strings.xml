@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">TelemetrySim</string>
+    <string name="splash_heading">Telemetry</string>
+    <string name="coord_x">Coordinate (x): </string>
+    <string name="coord_y">Coordinate (y): </string>
+    <string name="heading">Heading</string>
+    <string name="track">Track</string>
+    <string name="accel">Acceleration</string>
+    <string name="unavail">Unavailable</string>
+
+</resources>
