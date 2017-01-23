@@ -1,4 +1,4 @@
-package com.example.simm.telemetrysim;
+package com.example.simm.telemetryapp;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -16,10 +16,11 @@ public class MainActivity extends AppCompatActivity {
 
         ImageButton MyButton = (ImageButton) findViewById(R.id.launch);
 
+        //Assign imagebutton to launch TelemetrySim app
         MyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, Telemetry.class));
+                startActivity(new Intent(MainActivity.this, TelemetrySim.class));
             }
         });
     }
