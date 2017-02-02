@@ -16,9 +16,13 @@ using namespace std;
 typedef unsigned char byte;
 const int INBOUND_BUFFER_SIZE = 28;
 const int OUTBOUND_BUFFER_SIZE = 28;
+const int FOWARD_RATIO = 30;
+const int ID_ELEMENT = 3;
+const int ELEMENT_SIZE = 4;
+const int ELEMENT_CNT = OUTBOUND_BUFFER_SIZE / ELEMENT_SIZE;
 int SERVER_PRT = 4284; //4284 sending port to receive from
 int p_CLIENT_PRT = 8353; //destination port to transmit to
-const char* SRC_IP_ADR = "192.168.1.67"; //IP of the 'infotainment system' 
+const char* SRC_IP_ADR = "192.168.1.70"; //IP of the 'infotainment system' 
 const char* DST_IP_ADR = "192.168.1.81"; //destination ip addr to transmit to
 struct sockaddr_in client_socket;
 struct sockaddr_in server_socket;
@@ -80,6 +84,8 @@ void run()
 {
 	int count = 0;
 	int enable = 1;
+	int identifier_1_cnt = 0;
+	int identifier_2_cnt = 0;
 	char buffer[INBOUND_BUFFER_SIZE];
 	socklen_t s_size = sizeof(server_socket);
 	socklen_t c_size = sizeof(client_socket);
@@ -107,16 +113,20 @@ void run()
 		}
 		else
 		{
-			cout << "Packet #" << count << "; Data: " << buffer << endl;
+			if (count%FOWARD_RATIO == 0)
+			{
+				cout << "Packet #" << count << "; Receive on: " << SRC_IP_ADR << " : " << SERVER_PRT << endl;
+			}
 		}
 
 		//*************************************************************************************************************
 		// test into processing code, to be moved into it's own function when working
 		// CORRECT ENDIANNESS
 		// inbound is a array of U32 so elements are 4 bytes long.
-		const int ELEMENT_SIZE = 4;
-		const int ELEMENT_CNT = OUTBOUND_BUFFER_SIZE / ELEMENT_SIZE;
+
 		byte telemetry_data[OUTBOUND_BUFFER_SIZE];
+		byte id_element[ELEMENT_SIZE];
+		int identifier;
 
 		memset(&telemetry_data, 0, sizeof(telemetry_data));
 
@@ -125,20 +135,28 @@ void run()
 			for (int n = 0; n < ELEMENT_SIZE; ++n)
 			{
 				telemetry_data[((m * ELEMENT_SIZE) + (n))] = buffer[((m * ELEMENT_SIZE) + (ELEMENT_SIZE - (n+1)))];
+				if (m == ID_ELEMENT)
+				{
+					id_element[n] = telemetry_data[((m * ELEMENT_SIZE) + (n))];
+				}
 			}
 		}
 
+		memcpy(&identifier, id_element, sizeof(identifier));
+
 		//*************************************************************************************************************
-		
-		if (sendto(client_socket_id, telemetry_data, sizeof(telemetry_data), 0, (struct sockaddr *) &client_socket, c_size) < 0) //sends packet
+		if (count%FOWARD_RATIO == 0)
 		{
-			error("send fail");
+			if (sendto(client_socket_id, telemetry_data, sizeof(telemetry_data), 0, (struct sockaddr *) &client_socket, c_size) < 0) //sends packet
+			{
+				error("send fail");
+			}
+			else
+			{
+				cout << "Sent to: " << DST_IP_ADR << ":" << p_CLIENT_PRT << " with identifier: " << identifier << endl;
+			}
 		}
-		else
-		{
-			cout << "Sent to: " << DST_IP_ADR << ":" << p_CLIENT_PRT << endl;
-			
-		}
+
 	}
 	close(server_socket_id);
 	close(client_socket_id);

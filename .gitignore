@@ -3,8 +3,8 @@
 *.VC.db
 *VC.opendb
 *.vcxproj.user
-/Linux_Modules/Infotainment_Prototype/Infotainment_Prototype/bin/
-/Linux_Modules/Infotainment_Prototype/Infotainment_Prototype/obj
-/Linux_Modules/Infotainment_Prototype/Infotainment_Prototype/Infotainment_Prototype.log
+/Linux_Modules/Infotainment_Prototype/bin/
+/Linux_Modules/Infotainment_Prototype/obj/
+/Linux_Modules/Infotainment_Prototype/Infotainment_Prototype.log
 /Android_UI/TelemetrySim(C#)/bin
 /Android_UI/TelemetrySim(C#)/obj
