@@ -23,7 +23,7 @@ const int ELEMENT_CNT = OUTBOUND_BUFFER_SIZE / ELEMENT_SIZE;
 int SERVER_PRT = 4284; //4284 sending port to receive from
 int p_CLIENT_PRT = 8353; //destination port to transmit to
 const char* SRC_IP_ADR = "192.168.1.70"; //IP of the 'infotainment system' 
-const char* DST_IP_ADR = "192.168.1.81"; //destination ip addr to transmit to
+const char* DST_IP_ADR = "192.168.1.154"; //destination ip addr to transmit to
 struct sockaddr_in client_socket;
 struct sockaddr_in server_socket;
 int client_socket_id;
@@ -152,8 +152,6 @@ void run()
 
 
 		cout << "    Data: "  << element_0 << " : " << element_1 << " : " << element_2 << " : " << identifier << " : " << element_4 << " : " << element_5 << " : " << element_6 << " : " << endl;
-
-		//memcpy(&identifier, id_element, sizeof(identifier));
 
 		//*************************************************************************************************************
 		if (count%FOWARD_RATIO == 0)

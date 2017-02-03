@@ -5,7 +5,8 @@
     android:id="@+id/activity_telemetry"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffffff">
+    android:background="#ffffffff"
+    android:clickable="false">
     <TextView
         android:text="Coordinate (x):"
         android:layout_width="wrap_content"
@@ -14,7 +15,7 @@
         android:textColor="#000"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:textSize="30px"
+        android:textSize="80px"
         android:paddingLeft="50px"
         android:paddingTop="10px"
         android:paddingBottom="5px" />
@@ -25,7 +26,7 @@
         android:id="@+id/CoordinateX_text"
         android:textColor="#000"
         android:layout_alignParentTop="true"
-        android:textSize="30px"
+        android:textSize="80px"
         android:paddingLeft="10px"
         android:paddingTop="10px"
         android:paddingBottom="5px"
@@ -38,7 +39,7 @@
         android:textColor="#000"
         android:layout_below="@+id/CoordinateX"
         android:layout_alignParentLeft="true"
-        android:textSize="30px"
+        android:textSize="80px"
         android:paddingLeft="50px"
         android:paddingTop="5px"
         android:paddingBottom="5px" />
@@ -49,7 +50,7 @@
         android:id="@+id/CoordinateY_text"
         android:textColor="#000"
         android:layout_below="@+id/CoordinateX_text"
-        android:textSize="30px"
+        android:textSize="80px"
         android:paddingLeft="10px"
         android:paddingTop="10px"
         android:paddingBottom="5px"
@@ -61,7 +62,7 @@
         android:lines="1"
         android:id="@+id/HeadingText"
         android:textColor="#000"
-        android:textSize="30px"
+        android:textSize="80px"
         android:paddingTop="5px"
         android:paddingBottom="5px"
         android:layout_centerHorizontal="true"
@@ -73,7 +74,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/HeadingData"
         android:textColor="#000"
-        android:textSize="28px"
+        android:textSize="75px"
         android:paddingTop="5px"
         android:paddingBottom="5px"
         android:layout_centerHorizontal="true"
@@ -86,7 +87,7 @@
         android:lines="1"
         android:id="@+id/AccelerationText"
         android:textColor="#000"
-        android:textSize="30px"
+        android:textSize="80px"
         android:paddingTop="5px"
         android:paddingBottom="5px"
         android:layout_centerHorizontal="true"
@@ -98,26 +99,27 @@
         android:layout_height="wrap_content"
         android:id="@+id/AccelerationData"
         android:textColor="#000"
-        android:textSize="28px"
+        android:textSize="75px"
         android:paddingTop="5px"
         android:paddingBottom="5px"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/AccelerationText"
         android:gravity="center" />
-    <ImageView
+    <ImageButton
         android:src="@drawable/tiretrack"
-        android:layout_width="150px"
-        android:layout_height="200px"
+        android:layout_width="300px"
+        android:layout_height="400px"
         android:id="@+id/TireImageFL"
         android:scaleType="center"
         android:paddingLeft="50px"
         android:paddingTop="50px"
         android:layout_below="@+id/CoordinateY"
-        android:layout_alignParentLeft="true" />
+        android:layout_alignParentLeft="true"
+        android:background="#ffffffff" />
     <ImageView
         android:src="@drawable/tiretrack"
-        android:layout_width="150px"
-        android:layout_height="200px"
+        android:layout_width="300px"
+        android:layout_height="400px"
         android:id="@+id/TireImageFR"
         android:scaleType="center"
         android:layout_gravity="center"
@@ -125,10 +127,20 @@
         android:paddingTop="50px"
         android:paddingRight="50px"
         android:layout_below="@+id/CoordinateY" />
+    <ImageButton
+        android:src="@drawable/red_button"
+        android:layout_width="750px"
+        android:layout_height="750px"
+        android:id="@+id/LaunchButton"
+        android:scaleType="center"
+        android:layout_below="@+id/HeadingData"
+        android:background="#ffffffff"
+        android:layout_centerInParent="true"
+        android:visibility="invisible" />
     <ImageView
         android:src="@drawable/tiretrack"
-        android:layout_width="150px"
-        android:layout_height="300px"
+        android:layout_width="300px"
+        android:layout_height="600px"
         android:id="@+id/TireImageRR"
         android:scaleType="center"
         android:layout_alignParentRight="true"
@@ -137,8 +149,8 @@
         android:paddingRight="50px" />
     <ImageView
         android:src="@drawable/tiretrack"
-        android:layout_width="150px"
-        android:layout_height="300px"
+        android:layout_width="300px"
+        android:layout_height="600px"
         android:id="@+id/TireImageRL"
         android:scaleType="center"
         android:layout_alignParentBottom="true"
