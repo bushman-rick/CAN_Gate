@@ -1,0 +1,1 @@
+*.sln files set to ignore, setup personal solution file in local repo.
