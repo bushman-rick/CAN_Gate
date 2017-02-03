@@ -7,6 +7,7 @@
 C:\Users\PrimaryUser\Media\Dropbox\Deakin\2016\SIT302\Source\SIT302-CAN_Gate\Linux_Modules\Infotainment_Prototype\Stream_info.cpp(53,43): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
 C:\Users\PrimaryUser\Media\Dropbox\Deakin\2016\SIT302\Source\SIT302-CAN_Gate\Linux_Modules\Infotainment_Prototype\Stream_info.cpp(72,45): warning : conversion to ‘uint16_t {aka short unsigned int}’ from ‘int’ may alter its value [-Wconversion]
 C:\Users\PrimaryUser\Media\Dropbox\Deakin\2016\SIT302\Source\SIT302-CAN_Gate\Linux_Modules\Infotainment_Prototype\Stream_info.cpp(81,1): warning : no return statement in function returning non-void [-Wreturn-type]
+C:\Users\PrimaryUser\Media\Dropbox\Deakin\2016\SIT302\Source\SIT302-CAN_Gate\Linux_Modules\Infotainment_Prototype\Stream_info.cpp(128,8): warning : variable ‘id_element’ set but not used [-Wunused-but-set-variable]
 C:\Users\PrimaryUser\Media\Dropbox\Deakin\2016\SIT302\Source\SIT302-CAN_Gate\Linux_Modules\Infotainment_Prototype\Stream_info.cpp(87,6): warning : unused variable ‘identifier_1_cnt’ [-Wunused-variable]
 C:\Users\PrimaryUser\Media\Dropbox\Deakin\2016\SIT302\Source\SIT302-CAN_Gate\Linux_Modules\Infotainment_Prototype\Stream_info.cpp(88,6): warning : unused variable ‘identifier_2_cnt’ [-Wunused-variable]
   Linking objects

@@ -115,7 +115,7 @@ void run()
 		{
 			if (count%FOWARD_RATIO == 0)
 			{
-				cout << "Packet #" << count << "; Receive on: " << SRC_IP_ADR << " : " << SERVER_PRT << endl;
+				cout << "    Packet #" << count << "; Receive on: " << SRC_IP_ADR << " : " << SERVER_PRT << endl;
 			}
 		}
 
@@ -126,7 +126,7 @@ void run()
 
 		byte telemetry_data[OUTBOUND_BUFFER_SIZE];
 		byte id_element[ELEMENT_SIZE];
-		int identifier;
+		int element_0, element_1, element_2, identifier, element_4, element_5, element_6;
 
 		memset(&telemetry_data, 0, sizeof(telemetry_data));
 
@@ -142,7 +142,18 @@ void run()
 			}
 		}
 
-		memcpy(&identifier, id_element, sizeof(identifier));
+		memcpy(&element_0, telemetry_data + 0, sizeof(element_0));
+		memcpy(&element_1, telemetry_data + 4, sizeof(element_1));
+		memcpy(&element_2, telemetry_data + 8, sizeof(element_2));
+		memcpy(&identifier, telemetry_data + 12, sizeof(identifier));
+		memcpy(&element_4, telemetry_data + 16, sizeof(element_4));
+		memcpy(&element_5, telemetry_data + 20, sizeof(element_5));
+		memcpy(&element_6, telemetry_data + 28, sizeof(element_6));
+
+
+		cout << "    Data: "  << element_0 << " : " << element_1 << " : " << element_2 << " : " << identifier << " : " << element_4 << " : " << element_5 << " : " << element_6 << " : " << endl;
+
+		//memcpy(&identifier, id_element, sizeof(identifier));
 
 		//*************************************************************************************************************
 		if (count%FOWARD_RATIO == 0)
@@ -153,7 +164,7 @@ void run()
 			}
 			else
 			{
-				cout << "Sent to: " << DST_IP_ADR << ":" << p_CLIENT_PRT << " with identifier: " << identifier << endl;
+				cout << "    Sent to: " << DST_IP_ADR << ":" << p_CLIENT_PRT << " with identifier: " << identifier << endl;
 			}
 		}
 

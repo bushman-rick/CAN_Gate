@@ -19,6 +19,18 @@
         android:paddingTop="10px"
         android:paddingBottom="5px" />
     <TextView
+        android:text="N/A"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/CoordinateX_text"
+        android:textColor="#000"
+        android:layout_alignParentTop="true"
+        android:textSize="30px"
+        android:paddingLeft="10px"
+        android:paddingTop="10px"
+        android:paddingBottom="5px"
+        android:layout_toRightOf="@id/CoordinateX" />
+    <TextView
         android:text="Coordinate (y):"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -31,10 +43,22 @@
         android:paddingTop="5px"
         android:paddingBottom="5px" />
     <TextView
+        android:text="N/A"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/CoordinateY_text"
+        android:textColor="#000"
+        android:layout_below="@+id/CoordinateX_text"
+        android:textSize="30px"
+        android:paddingLeft="10px"
+        android:paddingTop="10px"
+        android:paddingBottom="5px"
+        android:layout_toRightOf="@id/CoordinateY" />
+    <TextView
         android:text="Heading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:lines="7"
+        android:lines="1"
         android:id="@+id/HeadingText"
         android:textColor="#000"
         android:textSize="30px"
@@ -54,6 +78,31 @@
         android:paddingBottom="5px"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/HeadingText"
+        android:gravity="center" />
+    <TextView
+        android:text="Acceleration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:lines="1"
+        android:id="@+id/AccelerationText"
+        android:textColor="#000"
+        android:textSize="30px"
+        android:paddingTop="5px"
+        android:paddingBottom="5px"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:layout_alignTop="@+id/TireImageRL" />
+    <TextView
+        android:text="unavailable"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/AccelerationData"
+        android:textColor="#000"
+        android:textSize="28px"
+        android:paddingTop="5px"
+        android:paddingBottom="5px"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/AccelerationText"
         android:gravity="center" />
     <ImageView
         android:src="@drawable/tiretrack"
