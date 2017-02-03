@@ -52,30 +52,35 @@ public class TelemetrySim extends AppCompatActivity {
             public void run() {
 
                 //used for debugging
-                //String message;
+                String message1;
 
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
                 try {
                     DatagramSocket dsocket = new DatagramSocket(udp_port);
-                    dsocket.receive(packet);
 
-                    //int used for data processing in Processor()
-                    packetLength = packet.getLength();
+                    while (isRunning) {
 
-                    //assigns each task to a new thread from the threadpool
-                    Processor();
+                        dsocket.receive(packet);
 
-                /*Used for debugging, uncomment to trace problems in the log.
-                message = new String(buffer, 0, packet.getLength());
-                Log.i("UDP packet received", message);
-                */
+                        //int used for data processing in Processor()
+                        packetLength = packet.getLength();
+
+                        //assigns each task to a new thread from the threadpool
+                        Processor();
+
+                        //Used for debugging, uncomment to trace problems in the log.
+                        message1 = new String(buffer, 0, packet.getLength());
+                        Log.i("message1", message1);
+                    }
+
 
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
 
             }
+
 
 
         };
@@ -91,7 +96,7 @@ public class TelemetrySim extends AppCompatActivity {
             public void run() {
 
                 //debugging string for monitor output
-                String message;
+                String message2;
                 byte[] messageByte;
                 String newUiText = "";
 
@@ -115,8 +120,8 @@ public class TelemetrySim extends AppCompatActivity {
                 UiRunner(newUiText);
 
                 //Debugging for monitor output
-                message = new String(messageByte);
-                Log.i("UDP packet received", message);
+                message2 = new String(messageByte);
+                Log.i("message2", message2);
                 Log.i("Test", newUiText);
 
             }
@@ -124,6 +129,7 @@ public class TelemetrySim extends AppCompatActivity {
 
         //assign each task to a new thread from the threadpool
         workerPool.execute(processorRun);
+
 
     }
 
