@@ -45,6 +45,20 @@ public class TelemetrySim extends AppCompatActivity {
         UdpServer();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        isRunning = false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        isRunning = true;
+    }
+
     //Runs the UDP server on another thread
     private void UdpServer() {
         Runnable serverRun = new Runnable() {
@@ -78,6 +92,7 @@ public class TelemetrySim extends AppCompatActivity {
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
+
 
             }
 
