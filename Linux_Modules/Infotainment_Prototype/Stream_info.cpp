@@ -1,14 +1,18 @@
 #include<iostream>
-#include<arpa/inet.h> //source: http://unix.superglobalmegacorp.com/xnu/newsrc/bsd/include/arpa/inet.h.html
-#include<unistd.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/unistd.h.html
-#include<sys/socket.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/socket.h.html
 #include<sys/types.h>
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
+#include<fstream>
+// Some include files (headers) are not bundeled by default with the Linux extention to Visual Studio.
+// The missing headers have been sourced from the location below and added to the developemnt machine at following location
+//"D:\Program Files\VS Enterprise 2015\VC\Linux\include\usr\include" or
+//"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\Linux\include\usr\include"
+#include<arpa/inet.h> //source: http://unix.superglobalmegacorp.com/xnu/newsrc/bsd/include/arpa/inet.h.html
+#include<unistd.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/unistd.h.html
+#include<sys/socket.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/socket.h.html
 #include<netinet/in.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/netinet/in.h.html
 #include<sys/time.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/time.h.html
-#include<fstream>
 #include<sys/stat.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/stat.h.html
 #include<fcntl.h> //source http://unix.superglobalmegacorp.com/Net2/newsrc/sys/fcntl.h.html
 
@@ -29,6 +33,7 @@ struct sockaddr_in server_socket;
 int client_socket_id;
 int server_socket_id;
 
+// boradcast erro to OS and exit
 void error(const char *msg)
 {
 	perror(msg);
@@ -80,6 +85,7 @@ int process_init()
 	client_init();
 }
 
+// main function, messages are received, processed and published in a permanent loop.
 void run()
 {
 	int count = 0;
@@ -90,22 +96,28 @@ void run()
 	socklen_t s_size = sizeof(server_socket);
 	socklen_t c_size = sizeof(client_socket);
 
+	// setup server socket to listen for incoming messages.
+	// set options
 	cout << "\nGetting ready to receive on: " << SRC_IP_ADR << " : " << SERVER_PRT << endl;
-	
 	if (setsockopt(server_socket_id, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
 	{
 		error("setsockopt(SO_REUSEADDR) failed");
 	}
-
+	// bind address
 	if (bind(server_socket_id, (struct sockaddr*) &server_socket, s_size) < 0)
 	{
 		error("bind error");
 	}
 
-	while (true)
+	// main loop, messages are received, processed and re-published
+	while (enable)
 	{
+		// message counter
 		count++;
+		// buffer for inbound messages
 		memset(&buffer, 0, sizeof(buffer));
+
+		// call recieve
 		if (recvfrom(server_socket_id, buffer, sizeof(buffer), 0, (struct sockaddr *)&server_socket, &s_size) < 0)
 		{
 			error("receive error");
@@ -120,16 +132,15 @@ void run()
 		}
 
 		//*************************************************************************************************************
-		// test into processing code, to be moved into it's own function when working
-		// CORRECT ENDIANNESS
-		// inbound is a array of U32 so elements are 4 bytes long.
-
+		// this section processes data and correct endeness 
 		byte telemetry_data[OUTBOUND_BUFFER_SIZE];
 		byte id_element[ELEMENT_SIZE];
 		int element_0, element_1, element_2, identifier, element_4, element_5, element_6;
-
+		// telemetry_data = buffer for the inbound data
 		memset(&telemetry_data, 0, sizeof(telemetry_data));
 
+		// inbound data is expected in byte array of 7 x 32 UINT's
+		// the order of each four bytes are reveresed to correct endeness 
 		for (int m = 0; m < ELEMENT_CNT; ++m)
 		{
 			for (int n = 0; n < ELEMENT_SIZE; ++n)
@@ -142,6 +153,7 @@ void run()
 			}
 		}
 
+		// each element of the telemetry_data array is copied to a INT object
 		memcpy(&element_0, telemetry_data + 0, sizeof(element_0));
 		memcpy(&element_1, telemetry_data + 4, sizeof(element_1));
 		memcpy(&element_2, telemetry_data + 8, sizeof(element_2));
@@ -150,10 +162,11 @@ void run()
 		memcpy(&element_5, telemetry_data + 20, sizeof(element_5));
 		memcpy(&element_6, telemetry_data + 28, sizeof(element_6));
 
-
 		cout << "    Data: "  << element_0 << " : " << element_1 << " : " << element_2 << " : " << identifier << " : " << element_4 << " : " << element_5 << " : " << element_6 << " : " << endl;
 
 		//*************************************************************************************************************
+
+		// every n'th message. accoring to the FOWARD_RATIO is republished for the telemetry target
 		if (count%FOWARD_RATIO == 0)
 		{
 			if (sendto(client_socket_id, telemetry_data, sizeof(telemetry_data), 0, (struct sockaddr *) &client_socket, c_size) < 0) //sends packet
@@ -170,6 +183,7 @@ void run()
 	close(server_socket_id);
 	close(client_socket_id);
 }
+// main loop
 int main()
 {
 	process_init();

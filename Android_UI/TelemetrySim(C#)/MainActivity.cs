@@ -8,6 +8,7 @@ using Android.OS;
 
 namespace TelemetrySim
 {
+    // main activity, displays splash
     [Activity(Theme = "@style/Theme.NoTitle", MainLauncher = true, Icon = "@drawable/icon")]
     public class MainActivity : Activity
     {

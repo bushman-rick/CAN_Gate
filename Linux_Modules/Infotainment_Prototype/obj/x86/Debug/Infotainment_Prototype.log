@@ -1,6 +1,7 @@
-﻿  Validating architecture
+﻿  Cleaning remote project directory
+  Validating architecture
   Validating sources
-  Copying sources remotely to '192.168.0.102'
+  Copying sources remotely to '192.168.0.101'
   Starting remote build
   Compiling sources:
   Stream_info.cpp

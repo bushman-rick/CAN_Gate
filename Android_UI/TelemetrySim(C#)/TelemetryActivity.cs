@@ -16,23 +16,28 @@ namespace TelemetrySim
     [Activity(Theme = "@style/Theme.NoTitle")]
     public class TelemetryActivity : Activity
     {
+        // text boxes to display received values
         TextView textView_heading;
         TextView textView_coordinate_x;
         TextView textView_coordinate_y;
         TextView textView_acceleration;
 
+        // activity scoped variables
         UdpState state;
-        bool stop;
-        bool busy_processing;
-        bool receive_paused;
+        private bool stop;
+        private bool busy_processing;
+        private bool receive_paused;
         private const int LISTENING_PORT = 8353;
         private const int INCOMING_ELEMENT_LENGTH = 4;
-        float heading = 0;
-        float acceleration = 0;
-        float track = 0;
-        float coordinate_x = 0;
-        float coordinate_y = 0; 
+        private float heading = 0;
+        private float acceleration = 0;
+        private float track = 0;
+        private float coordinate_x = 0;
+        private float coordinate_y = 0;
 
+        /// <summary>
+        /// 'OnCreate' function, create activity
+        /// </summary>
         protected override void OnCreate(Bundle savedInstanceState)
         {
             RequestWindowFeature(WindowFeatures.NoTitle);
@@ -60,6 +65,9 @@ namespace TelemetrySim
             };
         }
 
+        /// <summary>
+        /// Updates the UI, reading the activity scoped variables
+        /// </summary>
         private void UpdateUI()
         {
             textView_heading.Text = heading.ToString();
@@ -68,6 +76,9 @@ namespace TelemetrySim
             textView_acceleration.Text = acceleration.ToString();
         }
 
+        /// <summary>
+        /// Changes the UI visuals and displays the 'attack' button
+        /// </summary>
         private void PrepAttack()
         {
             View telemetry_activity = FindViewById(Resource.Id.activity_telemetry);
@@ -90,10 +101,11 @@ namespace TelemetrySim
             {
                 LaunchAttack();
             };
-
-
         }
 
+        /// <summary>
+        /// builds an empty packet that targets prot on the CAN bus
+        /// </summary>
         private void LaunchAttack()
         {
             byte[] message =   {  0x00, 0x00, 0x00, 0x06,
@@ -106,6 +118,7 @@ namespace TelemetrySim
 
             UdpClient malicious_UDP_client = new UdpClient("192.168.1.74", 4282);
 
+            // rapidly sents the attack packet, DOS style attack.
             int count = 0;
             while (count < 500)
             {
@@ -131,10 +144,16 @@ namespace TelemetrySim
             state.udp_listener.BeginReceive(new AsyncCallback(ProcessTelemetryData), null);
         }
 
+        /// <summary>
+        /// processes the async callback from BeginReceive when receives incoming packet
+        /// </summary>
+        /// <param name="result">BeginReceive async callback</param>
         private void ProcessTelemetryData(IAsyncResult result)
         {
             state.end_point = new IPEndPoint(IPAddress.Any, LISTENING_PORT);
             byte[] data = state.udp_listener.EndReceive(result, ref state.end_point);
+            
+            // checks if the receive / listen recursive loop should pause
             if (!stop && !busy_processing)
             {
                 Receive();
@@ -146,21 +165,31 @@ namespace TelemetrySim
             ProcessData(data);
         }
 
+        /// <summary>
+        /// main function for processing the incoming data
+        /// </summary>
+        /// <param name="data">byte array of incoming packet</param>
         private void ProcessData(byte[] data)
         {
+            // causes the receive / listen recursive loop to pause
             busy_processing = true;
+
             byte[] current_data = (byte[])data.Clone();
             int element_cnt = data.Length / INCOMING_ELEMENT_LENGTH;
             byte[][] elements = new byte[element_cnt][];
 
+            // incoming packets should 7 x 32 UINT's (7 blocks of 4 bytes)
             if (element_cnt == 7)
             {
+                // copy current_data into individual arrays so each one can be processed for display.
                 for (int i = 0; i < element_cnt; i++)
                 {
                     elements[i] = new byte[INCOMING_ELEMENT_LENGTH];
                     Array.Copy(current_data, (i * INCOMING_ELEMENT_LENGTH), elements[i], 0, INCOMING_ELEMENT_LENGTH);
                 }
 
+                // unpack the 6th element into headin and acceleration, 
+                // reverse of the operation proformed by LabVIEW 
                 if (BitConverter.ToUInt32(elements[3], 0) == 2)
                 {
                     byte[] byte_swap = new byte[2];
@@ -173,6 +202,8 @@ namespace TelemetrySim
                     acceleration = acceleration - 100; 
                 }
 
+                // unpack the 7th element into headin and acceleration, 
+                // reverse of the operation proformed by LabVIEW 
                 if (BitConverter.ToUInt32(elements[3], 0) == 1)
                 {
                     coordinate_x = (float)BitConverter.ToInt16(elements[6], 0);
