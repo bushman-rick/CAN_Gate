@@ -3,7 +3,7 @@ Top level folders
 - Android_UI
 - - TelemetrySim(C#) : The android telemetry actor in C#
 
-- - TelemetrySim(Java) : The android telemetry actor in C#
+- - TelemetrySim(Java) : The android telemetry actor in Java
 
 - Linux_Modules
 - - Infotainment_Prototype : The C++ infotainment actor. 
